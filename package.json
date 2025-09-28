@@ -1,0 +1,37 @@
+{
+  "name": "read-wolf",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist",
+    "publish": "vue-tsc -b && vite build && gh-pages -d dist",
+    "lint": "eslint . --ext .vue,.js,.ts",
+    "lint:fix": "eslint . --ext .vue,.js,.ts --fix"
+  },
+  "dependencies": {
+    "@types/node": "^24.5.2",
+    "vue": "^3.5.17",
+    "vue-i18n": "^11.1.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/tsconfig": "^0.7.0",
+    "eslint": "^9.35.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-vue": "^10.4.0",
+    "gh-pages": "^6.3.0",
+    "prettier": "^3.6.2",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4",
+    "vue-eslint-parser": "^10.2.0",
+    "vue-tsc": "^2.2.12"
+  }
+}
