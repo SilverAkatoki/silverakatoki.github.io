@@ -1,0 +1,117 @@
+<script setup lang="ts">
+</script>
+
+<template>
+  <header>
+    <div id="head_container">
+      <router-link to="/">SilverAkatoki's Blog</router-link>
+    </div>
+    <div id="navigation_bar">
+      <ul id="navigation_buttons">
+        <li>
+          <router-link
+            to="/"
+            class="navigation_button"
+            :class="{ inactivated: $route.path === '/' }"
+            :style="$route.path === '/' ? 'pointer-events:none;' : ''"
+          >
+            主页
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/archives"
+            class="navigation_button"
+            :class="{ inactivated: $route.path === '/archives' }"
+            :style="$route.path === '/archives' ? 'pointer-events:none;' : ''"
+            title="存放往期文章的地方"
+          >
+            归档
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            to="/utils"
+            class="navigation_button"
+            :class="{ inactivated: $route.path === '/utils' }"
+            :style="$route.path === '/utils' ? 'pointer-events:none;' : ''"
+            title="小玩具"
+          >
+            小玩具
+          </router-link>
+        </li>
+      </ul>
+    </div>
+  </header>
+</template>
+
+
+
+<style scoped>
+#head_container {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+#head_container > a {
+    padding-left: 31.4vh;
+    font-weight: bold;
+    font-size: larger;
+    text-decoration: none;
+}
+
+#head_container > a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
+#navigation_bar {
+    height: 41px;
+    background: linear-gradient(#FDFFFD, #ECECEC);
+    border-bottom: 1.5px solid #ccc;
+}
+
+#navigation_buttons {
+    padding-left: 31.4vh;
+    list-style: none;
+    height: 100%;
+    letter-spacing: -8px;
+}
+
+#navigation_buttons > li {
+    display: inline-block;
+    letter-spacing: normal;
+    background-color: white;
+    padding: 1em 0.5em 0.25em 0.5em;
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.navigation_button.activated {
+    text-decoration: none;
+}
+
+.navigation_button.activated:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+}
+
+.navigation_button.inactivated {
+    color: black;
+    text-decoration: none;
+}
+
+a:link {
+    color: #1944AD;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #170080;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+</style>

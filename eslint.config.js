@@ -91,12 +91,12 @@ const commonJavaScriptRules = {
 
 // 公共代码风格规则
 const commonStyleRules = {
-  "quotes": ["error", "double"],
-  "semi": ["error", "always"],
+  quotes: ["error", "double"],
+  semi: ["error", "always"],
   "comma-dangle": ["error", "never"],
   "eol-last": "error",
   "no-trailing-spaces": "error",
-  "indent": ["error", 2],
+  indent: ["error", 2],
   "comma-spacing": "error",
   "key-spacing": "error",
   "keyword-spacing": "error",
@@ -211,7 +211,7 @@ export default [
         "error",
         {
           html: {
-            void: "never",
+            void: "always",
             normal: "always",
             component: "always"
           },

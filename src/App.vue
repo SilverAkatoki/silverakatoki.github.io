@@ -1,30 +1,53 @@
 <script setup lang="ts">
-import HelloWorld from "@/components/HelloWorld.vue";
+import Footer from "@/components/Footer.vue";
+import Header from "@/components/Header.vue";
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo">
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo">
-    </a>
+  <div id="app">
+    <Header />
+    <main>
+      <router-view />
+    </main>
+    <Footer />
   </div>
-  <hello-world msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<style lang="css">
+:root {
+  --footer-height: 64px;
+  --body-container-margin: 35vh;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+* {
+  padding: 0;
+  margin: 0;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+html body {
+  font-family: "思源黑体";
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+a:link {
+  color: #1944ad;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #170080;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 </style>

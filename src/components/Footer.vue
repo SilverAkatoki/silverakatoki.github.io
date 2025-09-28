@@ -1,0 +1,52 @@
+<script setup lang="ts">
+import { onMounted } from "vue";
+
+onMounted(() => {
+  const script = document.createElement("script");
+  script.src = "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
+  script.async = true;
+  document.head.appendChild(script);
+});
+</script>
+
+<template>
+  <footer>
+    <p>Copyright ©银晓 SilverAkatoki</p>
+    <div id="site_viewer_counter_container">
+      <p><span>已有</span><span id="busuanzi_value_site_uv" /><span>人曾造访本站（UV）</span></p>
+      <p><span>共查看了</span><span id="busuanzi_value_site_pv" /><span>次（PV）</span></p>
+    </div>
+  </footer>
+</template>
+
+<style scoped>
+footer {
+    width: 100%;
+    height: 64px;
+    background-color: #F0F0F0;
+    border-top: 1px solid silver;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+footer > p {
+    color: #898989;
+}
+
+#site_viewer_counter_container {
+    padding-left: 3em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#site_viewer_counter_container > p {
+    color: #898989;
+}
+
+#busuanzi_value_site_uv,
+#busuanzi_value_site_pv {
+    font-weight: 600;
+}
+</style>
