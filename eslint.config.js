@@ -13,7 +13,11 @@ const browserGlobals = {
   console: "readonly",
   setTimeout: "readonly",
   HTMLElement: "readonly",
-  URL: "readonly"
+  URL: "readonly",
+  fetch: "readonly",
+  Headers: "readonly",
+  Request: "readonly",
+  Response: "readonly"
 };
 
 // 公共导入顺序配置

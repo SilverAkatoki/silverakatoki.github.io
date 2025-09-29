@@ -3,16 +3,5 @@
     "readme": "哼哼啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
     "titleSentences": ["unknown", "null"],
     "friendLink": [{ "name": "Money", "url": "https://www.bilibili.com/" }]
-  },
-  "tags": ["测试", "Test"],
-  "archives": {
-    "2cb96b50-fc55-4515-b1f4-d2603f02d86e": {
-      "title": "测试文章",
-      "date": "2024-06-01"
-    },
-    "7d8f2d7e-001d-420c-a09a-4a0116423bc2": {
-      "title": "Hello World",
-      "date": "2024-06-02"
-    }
   }
 }

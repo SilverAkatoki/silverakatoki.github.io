@@ -2,9 +2,9 @@
 import { ref, onMounted } from "vue";
 
 import { siteInfo } from "@/info.json";
-import {  getRandomSentence } from "@/utils/dateUtils";
+import { getRandomSentence } from "@/utils/dateUtils";
 
-const randomSentence = ref("");
+const randomSentence = ref<string>("");
 
 onMounted(() => {
   randomSentence.value = getRandomSentence(siteInfo.titleSentences);
@@ -33,12 +33,9 @@ onMounted(() => {
       </div>
       <div class="readme-divider" />
       <p class="friend-link-title">友链</p>
-      <ul class="friend-links">
+      <ul v-for="link in siteInfo.friendLink" :key="link.url" class="friend-links">
         <li class="friend-link-item">
-          <a href="https://blog.wscraft.fun/" title="前往他的博客">Darksky</a>
-        </li>
-        <li class="friend-link-item">
-          <a href="https://2hard4me.site/" title="前往他的博客">2hard4me</a>
+          <a :href="link.url" title="前往他的博客">{{ link.name }}</a>
         </li>
       </ul>
     </div>

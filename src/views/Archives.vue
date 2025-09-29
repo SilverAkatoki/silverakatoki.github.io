@@ -1,24 +1,7 @@
-<script setup lang="ts">
-import { tags, archives } from "@/info.json";
-
-interface Archive {
-  uuid: string;
-  title: string;
-  dateStr: string;
-}
-
-const aaa: readonly Archive[] = [
-  {
-    uuid: "7d8f2d7e-001d-420c-a09a-4a0116423bc2",
-    title: "测试文档 2",
-    dateStr: "2025-09-30"
-  },
-  {
-    uuid: "2cb96b50-fc55-4515-b1f4-d2603f02d86e",
-    title: "测试文档 1",
-    dateStr: "2025-09-29"
-  }
-];
+﻿<script setup lang="ts">
+import { archives } from "@/archives-index.json";
+import ArchiveShowItem from "@/components/ArchiveShowItem.vue";
+import { tags } from "@/tags.json";
 </script>
 
 <template>
@@ -44,27 +27,17 @@ const aaa: readonly Archive[] = [
       <p id="archives-title">文章目录</p>
       <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em" />
       <div id="archives-container">
-        <div v-for="archive in aaa" :key="archive.title" class="archive-item">
-          <router-link
-            v-if="archive.uuid"
-            :to="`/article/${archive.uuid}`"
-            class="archive-title"
-          >
-            {{ archive.title }}
-          </router-link>
-          <span v-else class="archive-title">{{ archive.title }}</span>
-          <span v-if="archive.dateStr" class="archive-time">
-            {{ archive.dateStr }}
-          </span>
-        </div>
+        <archive-show-item
+          v-for="archive in archives"
+          :key="archive.uuid"
+          :archive="archive"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* 全局样式已移至 style.css */
-
 #body_container {
   margin-left: var(--body-container-margin);
   margin-right: var(--body-container-margin);
@@ -136,52 +109,5 @@ const aaa: readonly Archive[] = [
   margin-bottom: 5px;
   font-size: 30px;
   letter-spacing: 1px;
-}
-
-.archive-item {
-  display: flex;
-  position: relative;
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-top: 0.75em;
-  margin-bottom: 0.75em;
-  flex-direction: row;
-  align-items: center;
-}
-
-.archive-item::before {
-  content: "";
-  display: block;
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  background-color: #1b518a;
-  border-radius: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.archive-title {
-  flex: 1;
-  font-size: large;
-  font-weight: bold;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  margin-left: 10px;
-}
-
-.archive-content {
-  margin-left: 10px;
-  margin-top: 5px;
-}
-
-.archive-time {
-  margin-left: auto;
-  margin-right: 2px;
-  display: inline-block;
-  color: var(--text-gray);
-  align-self: flex-end;
-  justify-self: center;
 }
 </style>
