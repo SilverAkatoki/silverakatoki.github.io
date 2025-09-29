@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 
-import { lastUpdateDateStr, titleSentences, archiveData } from "@/types";
-import { calculateDaysSince, getRandomSentence } from "@/utils/dateUtils";
+import { siteInfo } from "@/info.json";
+import {  getRandomSentence } from "@/utils/dateUtils";
 
 const randomSentence = ref("");
-const daysSinceUpdate = computed(() => calculateDaysSince(lastUpdateDateStr));
 
 onMounted(() => {
-  randomSentence.value = getRandomSentence(titleSentences);
+  randomSentence.value = getRandomSentence(siteInfo.titleSentences);
 });
 </script>
 
@@ -18,26 +17,19 @@ onMounted(() => {
     <p class="sub-title">银晓的博客</p>
     <p class="sentence">{{ randomSentence }}</p>
     <div class="time-info-container">
-      <p class="time-label">上次更新</p>
-      <p class="last-update-date">{{ lastUpdateDateStr }}</p>
-      <p class="separator">|</p>
-      <p class="time-label">距今</p>
-      <p class="last-update-date-distance">{{ daysSinceUpdate }}</p>
-      <p>天</p>
+      <span class="time-label">上次更新</span>
+      <span class="last-update-date">114-514</span>
+      <span class="separator">|</span>
+      <span class="time-label">距今</span>
+      <span class="last-update-date-distance">1919</span>
+      <span>天</span>
     </div>
   </div>
   <div class="body-container">
     <div class="readme-container">
       <p class="readme-title">README</p>
       <div class="readme-text">
-        这里写自述的话<br />
-        换行<br />
-        占位符<br />
-        占位符<br />
-        占位符<br />
-        占位符<br />
-        占位符<br />
-        记得写项目展示，内嵌超链接
+        {{ siteInfo.readme }}
       </div>
       <div class="readme-divider" />
       <p class="friend-link-title">友链</p>
@@ -50,33 +42,10 @@ onMounted(() => {
         </li>
       </ul>
     </div>
-    <ArticleList :articles="archiveData" title="最新文章" :max-items="5" />
   </div>
 </template>
 
 <style scoped>
-:root {
-  --body-container-margin: 35vh;
-}
-
-* {
-  padding: 0;
-  margin: 0;
-}
-
-a:link {
-  color: #1944ad;
-  text-decoration: none;
-}
-
-a:visited {
-  color: #170080;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 .body-container {
   margin-left: var(--body-container-margin);
   margin-right: var(--body-container-margin);
@@ -92,7 +61,7 @@ a:hover {
 }
 
 .main-title {
-  font-family: 思源宋体;
+  font-family: var(--font-family-serif);
   font-size: 42px;
   font-weight: bolder;
   margin: 20px;
@@ -107,14 +76,14 @@ a:hover {
 .sentence {
   margin-top: 8px;
   font-style: italic;
-  color: #898989;
+  color: var(--text-gray);
 }
 
 .time-info-container {
   display: flex;
 }
 
-.time-info-container > p {
+.time-info-container > span {
   margin: 2px;
 }
 
@@ -135,8 +104,8 @@ a:hover {
 .readme-container {
   margin-top: 1em;
   margin-bottom: 1em;
-  background-color: #f8f8f8;
-  border: 2px solid #c0c0c0;
+  background-color: var(--background-gray);
+  border: 2px solid var(--border-gray);
   border-radius: 5px;
 }
 
@@ -154,7 +123,7 @@ a:hover {
 }
 
 .readme-divider {
-  border-bottom: 2px solid #c0c0c0;
+  border-bottom: 2px solid var(--border-gray);
 }
 
 .friend-links {

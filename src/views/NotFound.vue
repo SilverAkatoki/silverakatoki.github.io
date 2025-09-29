@@ -1,8 +1,8 @@
 <template>
   <div id="title_container">
-    <p id="page_not_found_title">404</p>
-    <p id="sub_title">页面未找到</p>
-    <p id="sentence">您访问的页面不存在</p>
+    <div id="page_not_found_title">404</div>
+    <div id="sub_title">页面未找到</div>
+    <div id="sentence">您访问的页面不存在</div>
     <div style="margin-top: 20px;">
       <router-link to="/">
         返回主页
@@ -39,7 +39,7 @@
 #sentence {
     margin-top: 8px;
     font-style: italic;
-    color: #898989;
+    color: var(--text-gray);
 }
 
 a:hover {

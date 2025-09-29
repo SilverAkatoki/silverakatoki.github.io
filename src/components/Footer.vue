@@ -13,8 +13,8 @@ onMounted(() => {
   <footer>
     <p>Copyright ©银晓 SilverAkatoki</p>
     <div id="site_viewer_counter_container">
-      <p><span>已有</span><span id="busuanzi_value_site_uv" /><span>人曾造访本站（UV）</span></p>
-      <p><span>共查看了</span><span id="busuanzi_value_site_pv" /><span>次（PV）</span></p>
+      <span><span>已有</span><span id="busuanzi_value_site_uv" /><span>人曾造访本站（UV）</span></span>
+      <span><span>共查看了</span><span id="busuanzi_value_site_pv" /><span>次（PV）</span></span>
     </div>
   </footer>
 </template>
@@ -31,7 +31,7 @@ footer {
 }
 
 footer > p {
-    color: #898989;
+    color: var(--text-gray);
 }
 
 #site_viewer_counter_container {
@@ -41,8 +41,9 @@ footer > p {
     align-items: center;
 }
 
-#site_viewer_counter_container > p {
-    color: #898989;
+#site_viewer_counter_container > span {
+    color: var(--text-gray);
+    display: block;
 }
 
 #busuanzi_value_site_uv,

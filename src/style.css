@@ -1,4 +1,35 @@
+:root {
+  --footer-height: 64px;
+  --body-container-margin: 35vh;
+  --primary-link-color: #1944ad;
+  --visited-link-color: #170080;
+  --text-gray: #898989;
+  --border-gray: #c0c0c0;
+  --background-gray: #f8f8f8;
+  --font-family-serif: "思源宋体";
+  --font-family-sans: "思源黑体";
+}
+
 * {
   padding: 0;
   margin: 0;
+}
+
+/* 全局链接样式 */
+a:link {
+  color: var(--primary-link-color);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--visited-link-color);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* 全局字体 */
+html body {
+  font-family: var(--font-family-sans);
 }

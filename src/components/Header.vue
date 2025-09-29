@@ -102,16 +102,5 @@
     text-decoration: none;
 }
 
-a:link {
-    color: #1944AD;
-    text-decoration: none;
-}
-
-a:visited {
-    color: #170080;
-}
-
-a:hover {
-    text-decoration: underline;
-}
+/* 链接样式已移至全局样式 */
 </style>

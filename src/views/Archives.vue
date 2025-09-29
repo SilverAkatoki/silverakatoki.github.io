@@ -1,24 +1,41 @@
 <script setup lang="ts">
-import { archiveTags, archiveData, archiveCount, tagEmptyTip } from "@/types";
+import { tags, archives } from "@/info.json";
+
+interface Archive {
+  uuid: string;
+  title: string;
+  dateStr: string;
+}
+
+const aaa: readonly Archive[] = [
+  {
+    uuid: "7d8f2d7e-001d-420c-a09a-4a0116423bc2",
+    title: "测试文档 2",
+    dateStr: "2025-09-30"
+  },
+  {
+    uuid: "2cb96b50-fc55-4515-b1f4-d2603f02d86e",
+    title: "测试文档 1",
+    dateStr: "2025-09-29"
+  }
+];
 </script>
 
 <template>
   <div id="title_container">
     <p id="main_title">归档</p>
     <div id="archive-count-container">
-      <p>银晓已经写了</p>
-      <p id="archive-count">{{ archiveCount }}</p>
-      <p>篇文章</p>
+      <span>银晓已经写了</span>
+      <span id="archive-count">{{ Object.keys(archives).length }}</span>
+      <span>篇文章</span>
     </div>
   </div>
   <div id="body_container">
     <div id="tags-container">
       <p id="tags-title">标签</p>
       <ul id="tags">
-        <li v-if="archiveTags.length === 0" id="tag-empty">
-          {{ tagEmptyTip }}
-        </li>
-        <li v-for="tag in archiveTags" :key="tag">
+        <li v-if="tags.length === 0" id="tag-empty">空标签提示文本</li>
+        <li v-for="tag in tags" :key="tag">
           <router-link :to="`/tags/${tag}`">{{ tag }}</router-link>
         </li>
       </ul>
@@ -27,14 +44,10 @@ import { archiveTags, archiveData, archiveCount, tagEmptyTip } from "@/types";
       <p id="archives-title">文章目录</p>
       <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em" />
       <div id="archives-container">
-        <div
-          v-for="archive in archiveData"
-          :key="archive.title"
-          class="archive-item"
-        >
+        <div v-for="archive in aaa" :key="archive.title" class="archive-item">
           <router-link
-            v-if="archive.path"
-            :to="`/archives/${archive.path}`"
+            v-if="archive.uuid"
+            :to="`/article/${archive.uuid}`"
             class="archive-title"
           >
             {{ archive.title }}
@@ -50,22 +63,7 @@ import { archiveTags, archiveData, archiveCount, tagEmptyTip } from "@/types";
 </template>
 
 <style scoped>
-:root {
-  --body-container-margin: 35vh;
-}
-
-a:link {
-  color: #1944ad;
-  text-decoration: none;
-}
-
-a:visited {
-  color: #170080;
-}
-
-a:hover {
-  text-decoration: underline;
-}
+/* 全局样式已移至 style.css */
 
 #body_container {
   margin-left: var(--body-container-margin);
@@ -82,7 +80,7 @@ a:hover {
 }
 
 #main_title {
-  font-family: 思源宋体;
+  font-family: var(--font-family-serif);
   font-size: 42px;
   font-weight: bolder;
   margin: 20px;
@@ -93,7 +91,7 @@ a:hover {
   display: flex;
 }
 
-#archive-count-container > p {
+#archive-count-container > span {
   margin: 2px;
 }
 
@@ -104,8 +102,8 @@ a:hover {
 #tags-container {
   margin-top: 1em;
   margin-bottom: 1em;
-  background-color: #f8f8f8;
-  border: 2px solid #c0c0c0;
+  background-color: var(--background-gray);
+  border: 2px solid var(--border-gray);
   border-radius: 5px;
 }
 
@@ -129,7 +127,7 @@ a:hover {
 
 #tag-empty {
   font-style: italic;
-  color: #898989;
+  color: var(--text-gray);
 }
 
 #archives-title {
@@ -182,7 +180,7 @@ a:hover {
   margin-left: auto;
   margin-right: 2px;
   display: inline-block;
-  color: #898989;
+  color: var(--text-gray);
   align-self: flex-end;
   justify-self: center;
 }
