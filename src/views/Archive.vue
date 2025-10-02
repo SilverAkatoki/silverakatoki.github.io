@@ -1,64 +1,53 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from "vue";
 
+import { useRoute } from "vue-router";
+
 import DOMPurify from "dompurify";
 import hljs from "highlight.js/lib/common";
 import katex from "katex";
 import { marked } from "marked";
+import * as yamlFront from "yaml-front-matter";
 
-const markdownSource = ref<string>(`# Markdown + LaTeX Playground
+const route = useRoute();
 
-> A GitHub Flavored Markdown example rendered with Vue 3.
-> 
-> beaked lines
+const uuid = route.params.uuid as string;
 
-- [x] Parse headings, tables, and lists
-- [x] Render $$inline$$ formulas with KaTeX
-- [ ] Highlight fenced code automatically
-
-| Symbol | Description |
-| --- | --- |
-| $$\\alpha$$ | First letter in the sequence |
-| $$\\beta$$ | Second letter in the sequence |
-
-Here is the classic energy-mass equivalence inline: $$E = mc^2$$ within a sentence for context.
-
-We can also display formulas on their own line:
-
-$$
-\\sum_{k=1}^{n} k = \\frac{n (n + 1)}{2}
-$$
-
-\`\`\`ts
-// inline math $$doNotParse$$ must remain untouched inside code
-type Vector = [number, number];
-
-const length = (value: Vector): number => {
-  const [x, y] = value;
-  return Math.sqrt(x ** 2 + y ** 2);
-};
-\`\`\`
-
-\`\`\`rust
-// 🦀
-fn main() {
-    let inline_math = "$$doNotParse$$";
-    println!("Hello, world! {}", inline_math);
+interface ArchiveMeta {
+  title: string;
+  date: string;
+  tags: string[];
 }
-\`\`\`
 
-| Step | Details |
-| --- | --- |
-| 1 | Write Markdown with $$\\LaTeX$$ syntax |
-| 2 | Convert to HTML with safety checks |
-| 3 | Enjoy the highlighted result |
+const tagsSet = new Set<string>();
+const archiveContext = ref<string>("");
 
-Another block formula for good measure:
+fetch(`/posts/${uuid}.md`)
+  .then(res => res.text())
+  .then(data => {
+    archiveContext.value = data;
+  });
 
-$$
-\\sqrt{2}
-$$
-`);
+const context = yamlFront.loadFront(archiveContext.value);
+const title = context.__content
+  .trim()
+  .split("\n\n")[0]
+  .replace(/^#+\s*/, "");
+
+if (Array.isArray(context.tags)) {
+  context.tags.forEach(tag => tagsSet.add(tag));
+}
+
+const markdownSource = ref<string>(context.__content.trim());
+
+const meta: ArchiveMeta = {
+  title,
+  date: `${context.date.getFullYear()}-${(context.date.getMonth() + 1).toString().padStart(2, "0")}-${context.date.getDate().toString().padStart(2, "0")}`,
+  tags: context.tags || []
+};
+
+console.log(meta);
+
 
 marked.setOptions({ gfm: true, breaks: true });
 
@@ -119,7 +108,7 @@ const blockMathExtension = {
 marked.use({ extensions: [inlineMathExtension, blockMathExtension] });
 
 // 先由 marked 生成 HTML
-const renderedHtml = ref<string>("");
+const renderedHtml = ref<string>(context.__content);
 
 watch(
   markdownSource,
@@ -184,6 +173,7 @@ watch(
 <style>
 @import "highlight.js/styles/github.css";
 @import "katex/dist/katex.min.css";
+
 .article {
   min-height: 100vh;
   font-family:
