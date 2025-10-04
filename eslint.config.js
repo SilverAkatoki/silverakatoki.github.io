@@ -17,7 +17,10 @@ const browserGlobals = {
   fetch: "readonly",
   Headers: "readonly",
   Request: "readonly",
-  Response: "readonly"
+  Response: "readonly",
+  MouseEvent: "readonly",
+  Event: "readonly",
+  CustomEvent: "readonly",
 };
 
 // 公共导入顺序配置
