@@ -1,7 +1,6 @@
 ﻿<script setup lang="ts">
 import { articles } from "@/articles-index.json";
 import ArticleShowItem from "@/components/ArticleShowItem.vue";
-import { tags } from "@/tags.json";
 </script>
 
 <template>
@@ -14,15 +13,6 @@ import { tags } from "@/tags.json";
     </div>
   </div>
   <div id="body_container">
-    <div id="tags-container">
-      <p id="tags-title">标签</p>
-      <ul id="tags">
-        <li v-if="tags.length === 0" id="tag-empty">空标签提示文本</li>
-        <li v-for="tag in tags" :key="tag">
-          <router-link :to="`/tags/${tag}`">{{ tag }}</router-link>
-        </li>
-      </ul>
-    </div>
     <div id="articles">
       <p id="articles-title">文章目录</p>
       <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em" />

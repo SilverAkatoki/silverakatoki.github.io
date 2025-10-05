@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "prebuild": "ts-node scripts/prebuild.ts",
+    "build": "vite prebuild && vue-tsc -b && vite build",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",
     "publish": "vue-tsc -b && vite build && gh-pages -d dist",
@@ -20,6 +21,7 @@
     "katex": "^0.16.22",
     "marked": "^16.3.0",
     "marked-footnote": "^1.4.0",
+    "ts-node": "^10.9.2",
     "vue": "^3.5.17",
     "vue-i18n": "^11.1.12",
     "vue-router": "^4.5.1",

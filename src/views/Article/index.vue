@@ -20,12 +20,7 @@ const { sanitizedHtml, setArticleContent, clearArticleContent } = useArticleCont
 const fetchArticle = async (uuid: string): Promise<void> => {
   loadError.value = null;
 
-  const articleMetadata = articleIndex.get(uuid);
-  if (!articleMetadata) {
-    clearArticleContent();
-    loadError.value = "未找到对应记录";
-    return;
-  }
+  const articleMetadata = articleIndex.get(uuid)!;
 
   try {
     const baseUrl = import.meta.env.BASE_URL ?? "/";

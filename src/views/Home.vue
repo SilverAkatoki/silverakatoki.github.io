@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
-import { siteInfo } from "@/info.json";
+import { siteInfo } from "@/site-info.json";
 import { getRandomSentence } from "@/utils/dateUtils";
 
 const randomSentence = ref<string>("");

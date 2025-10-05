@@ -11,7 +11,6 @@ import type {
 } from "@/types/article";
 
 
-
 marked.setOptions({ gfm: true, breaks: true });
 
 const inlineMathExtension = {
@@ -89,17 +88,6 @@ const blockMathExtension = {
 marked.use({ extensions: [inlineMathExtension, blockMathExtension] });
 marked.use(markedFootnote({ description: "脚注", backRefLabel: "回到正文 {0}" }));
 
-
-const deriveTitle = (content: string, explicitTitle?: string): string => {
-  if (explicitTitle && explicitTitle.trim()) {
-    return explicitTitle.trim();
-  }
-
-  const firstBlock = content.split("\n\n")[0]?.trim() ?? "";
-  return firstBlock.replace(/^#+\s*/, "");
-};
-
-
 /**
   * 净化 HTML
 */
@@ -132,8 +120,6 @@ const sanitizeHtml = (html: string): string => {
   return DOMPurify.sanitize(html, sanitizeOptions);
 };
 
-
-
 export const useArticleContent = () => {
   const mdText = ref<string>("");
   const meta = ref<ArticleMetadata | null>(null);
@@ -158,11 +144,13 @@ export const useArticleContent = () => {
       }
 
       await nextTick();
+
+      // 应用高亮
       window.document.querySelectorAll("pre code").forEach(el => {
         try {
           hljs.highlightElement(el as HTMLElement);
         } catch {
-          // ignore
+          // 忽略错误
         }
       });
     },
@@ -175,25 +163,9 @@ export const useArticleContent = () => {
     meta.value = null;
   };
 
-  const setArticleContent = ({ metadata: metadata, content }: Article): void => {
-    if (!metadata) {
-      clearArticleContent();
-      return;
-    }
-
-    const trimmed = content.trim();
-
-    mdText.value = trimmed;
-
-    const tagsSet = new Set<string>();
-    (metadata.tags ?? []).forEach(tag => tagsSet.add(tag));
-
-    meta.value = {
-      title: deriveTitle(trimmed, metadata.title),
-      date: metadata.date ?? "",
-      tags: [...tagsSet],
-      uuid: metadata.uuid
-    };
+  const setArticleContent = ({ metadata, content }: Article): void => {
+    meta.value = metadata;
+    mdText.value = content.trim();
   };
 
   return {

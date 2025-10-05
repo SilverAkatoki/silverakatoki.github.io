@@ -249,7 +249,10 @@ export default [
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
-        project: "./tsconfig.app.json"
+        project: [
+          "./tsconfig.app.json",
+          "./tsconfig.node.json"
+        ]
       }
     },
     plugins: {
