@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import Archive from "@/views/Archive/index.vue";
-import Archives from "@/views/Archives.vue";
+import Article from "@/views/Article/index.vue";
+import Articles from "@/views/Articles.vue";
 import Home from "@/views/Home.vue";
 import NotFound from "@/views/NotFound.vue";
 
@@ -12,14 +12,14 @@ const routes = [
     component: Home
   },
   {
-    path: "/archives",
-    name: "Archives",
-    component: Archives
+    path: "/articles",
+    name: "Articles",
+    component: Articles
   },
   {
-    path: "/archive/:uuid",
-    name: "Archive",
-    component: Archive
+    path: "/article/:uuid",
+    name: "Article",
+    component: Article
   },
   {
     path: "/:pathMatch(.*)*",

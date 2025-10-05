@@ -1,15 +1,15 @@
 ﻿<script setup lang="ts">
-import { archives } from "@/archives-index.json";
-import ArchiveShowItem from "@/components/ArchiveShowItem.vue";
+import { articles } from "@/articles-index.json";
+import ArticleShowItem from "@/components/ArticleShowItem.vue";
 import { tags } from "@/tags.json";
 </script>
 
 <template>
   <div id="title_container">
     <p id="main_title">归档</p>
-    <div id="archive-count-container">
+    <div id="article-count-container">
       <span>银晓已经写了</span>
-      <span id="archive-count">{{ Object.keys(archives).length }}</span>
+      <span id="article-count">{{ Object.keys(articles).length }}</span>
       <span>篇文章</span>
     </div>
   </div>
@@ -23,14 +23,14 @@ import { tags } from "@/tags.json";
         </li>
       </ul>
     </div>
-    <div id="archives">
-      <p id="archives-title">文章目录</p>
+    <div id="articles">
+      <p id="articles-title">文章目录</p>
       <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em" />
-      <div id="archives-container">
-        <archive-show-item
-          v-for="archive in archives"
-          :key="archive.uuid"
-          :archive="archive"
+      <div id="articles-container">
+        <article-show-item
+          v-for="article in articles"
+          :key="article.uuid"
+          :article="article"
         />
       </div>
     </div>
@@ -60,15 +60,15 @@ import { tags } from "@/tags.json";
   margin-bottom: 0;
 }
 
-#archive-count-container {
+#article-count-container {
   display: flex;
 }
 
-#archive-count-container > span {
+#article-count-container > span {
   margin: 2px;
 }
 
-#archive-count {
+#article-count {
   font-weight: bold;
 }
 
@@ -103,7 +103,7 @@ import { tags } from "@/tags.json";
   color: var(--text-gray);
 }
 
-#archives-title {
+#articles-title {
   margin: 5px;
   margin-top: 25px;
   margin-bottom: 5px;

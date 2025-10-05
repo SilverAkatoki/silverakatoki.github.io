@@ -1,29 +1,29 @@
 ﻿<script setup lang="ts">
-import type { Archive } from "@/type";
+import type { Article } from "@/type";
 
 defineProps<{
-  archive: Archive;
+  article: Article;
 }>();
 </script>
 
 <template>
-  <div class="archive-item">
+  <div class="article-item">
     <router-link
-      v-if="archive.uuid"
-      :to="`/archive/${archive.uuid}`"
-      class="archive-title"
+      v-if="article.uuid"
+      :to="`/article/${article.uuid}`"
+      class="article-title"
     >
-      {{ archive.title }}
+      {{ article.title }}
     </router-link>
-    <span v-else class="archive-title">{{ archive.title }}</span>
-    <span class="archive-time">
-      {{ archive.date }}
+    <span v-else class="article-title">{{ article.title }}</span>
+    <span class="article-time">
+      {{ article.date }}
     </span>
   </div>
 </template>
 
 <style scoped>
-.archive-item {
+.article-item {
   display: flex;
   position: relative;
   margin-left: 5px;
@@ -34,7 +34,7 @@ defineProps<{
   align-items: center;
 }
 
-.archive-item::before {
+.article-item::before {
   content: "";
   display: block;
   position: absolute;
@@ -46,7 +46,7 @@ defineProps<{
   transform: translate(-50%, -50%);
 }
 
-.archive-title {
+.article-title {
   flex: 1;
   font-size: large;
   font-weight: bold;
@@ -56,12 +56,12 @@ defineProps<{
   margin-left: 10px;
 }
 
-.archive-content {
+.article-content {
   margin-left: 10px;
   margin-top: 5px;
 }
 
-.archive-time {
+.article-time {
   margin-left: auto;
   margin-right: 2px;
   display: inline-block;

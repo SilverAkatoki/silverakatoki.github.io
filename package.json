@@ -19,6 +19,7 @@
     "highlight.js": "^11.11.1",
     "katex": "^0.16.22",
     "marked": "^16.3.0",
+    "marked-footnote": "^1.4.0",
     "vue": "^3.5.17",
     "vue-i18n": "^11.1.12",
     "vue-router": "^4.5.1",

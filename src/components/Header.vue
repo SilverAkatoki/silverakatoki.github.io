@@ -20,10 +20,10 @@
         </li>
         <li>
           <router-link
-            to="/archives"
+            to="/articles"
             class="navigation_button"
-            :class="{ inactivated: $route.path === '/archives' }"
-            :style="$route.path === '/archives' ? 'pointer-events:none;' : ''"
+            :class="{ inactivated: $route.path === '/articles' }"
+            :style="$route.path === '/articles' ? 'pointer-events:none;' : ''"
             title="存放往期文章的地方"
           >
             归档

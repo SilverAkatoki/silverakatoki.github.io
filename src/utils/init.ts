@@ -2,19 +2,19 @@ import * as fs from "fs";
 
 import * as yamlFront from "yaml-front-matter";
 
-// 生成 archives-index.json
+// 生成 articles-index.json
 // 生成 tags.json
 // 删去 YAML front matter 后把 md 文件复制到 public/posts 目录下
 
 const postsDir = "public/posts";
-const archivesIndexPath = "public/archives-index.json";
+const articlesIndexPath = "public/articles-index.json";
 const tagsPath = "public/tags.json";
 
 if (!fs.existsSync(postsDir)) {
   fs.mkdirSync(postsDir);
 }
-if (!fs.existsSync(archivesIndexPath)) {
-  fs.writeFileSync(archivesIndexPath, "[]");
+if (!fs.existsSync(articlesIndexPath)) {
+  fs.writeFileSync(articlesIndexPath, "[]");
 }
 if (!fs.existsSync(tagsPath)) {
   fs.writeFileSync(tagsPath, "{}");
