@@ -13,6 +13,8 @@ const browserGlobals = {
   console: "readonly",
   setTimeout: "readonly",
   HTMLElement: "readonly",
+  HTMLAnchorElement: "readonly",
+  Element: "readonly",
   URL: "readonly",
   fetch: "readonly",
   Headers: "readonly",
@@ -20,7 +22,7 @@ const browserGlobals = {
   Response: "readonly",
   MouseEvent: "readonly",
   Event: "readonly",
-  CustomEvent: "readonly",
+  CustomEvent: "readonly"
 };
 
 // 公共导入顺序配置
@@ -192,19 +194,14 @@ export default [
       "vue/no-unused-refs": "error",
 
       // Vue 通用规则
+      "vue/no-vhtml": "allow", // 不开全给你黄了
       "vue/multi-word-component-names": "off",
       "vue/no-unused-vars": "error",
       "vue/attribute-hyphenation": ["error", "always"],
       "vue/component-definition-name-casing": ["error", "PascalCase"],
-      "vue/html-indent": ["error", 2],
+      "vue/html-indent": "off",
       "vue/html-quotes": ["error", "double"],
-      "vue/max-attributes-per-line": [
-        "error",
-        {
-          singleline: 3,
-          multiline: 1
-        }
-      ],
+      "vue/max-attributes-per-line": "off",
       "vue/mustache-interpolation-spacing": ["error", "always"],
       "vue/v-bind-style": ["error", "shorthand"],
       "vue/v-on-style": ["error", "shorthand"],
@@ -218,7 +215,7 @@ export default [
         {
           html: {
             void: "always",
-            normal: "always",
+            normal: "never",
             component: "always"
           },
           svg: "always",
@@ -248,10 +245,7 @@ export default [
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
-        project: [
-          "./tsconfig.app.json",
-          "./tsconfig.node.json"
-        ]
+        project: ["./tsconfig.app.json", "./tsconfig.node.json"]
       }
     },
     plugins: {

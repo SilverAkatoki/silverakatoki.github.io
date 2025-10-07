@@ -1,13 +1,11 @@
+@import url("https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css");
+
+
 :root {
-  --footer-height: 64px;
   --body-container-margin: 35vh;
-  --primary-link-color: #1944ad;
-  --visited-link-color: #170080;
   --text-gray: #898989;
   --border-gray: #c0c0c0;
   --background-gray: #f8f8f8;
-  --font-family-serif: "思源宋体";
-  --font-family-sans: "思源黑体";
 }
 
 * {
@@ -17,19 +15,18 @@
 }
 
 a:link {
-  color: var(--primary-link-color);
+  color: #1944ad;
   text-decoration: none;
 }
 
 a:visited {
-  color: var(--visited-link-color);
+  color: #170080;
 }
 
 a:hover {
   text-decoration: underline;
 }
 
-/* 全局字体 */
 html body {
-  font-family: var(--font-family-sans);
+  font-family: "思源黑体";
 }

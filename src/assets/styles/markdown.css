@@ -147,12 +147,13 @@
   margin-bottom: 0;
 }
 
-.footnote-ref {
+/* 脚注样式是给外边捕获事件要用的 */
+[data-footnote-ref] {
   font-size: 0.75em;
   vertical-align: super;
 }
 
-.footnote-backref {
+[data-footnote-backref] {
   margin-left: 0.5rem;
   font-size: 0.85em;
   color: #0969da;
@@ -160,7 +161,7 @@
   display: inline-block;
 }
 
-.footnote-backref:hover {
+[data-footnote-backref]:hover {
   text-decoration: underline;
 }
 

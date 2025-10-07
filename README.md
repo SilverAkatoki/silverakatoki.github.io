@@ -1,14 +1,33 @@
-﻿# Read Wolf
+﻿# 狼迹拾遗
 
-## 项目简介
+银晓的静态博客框架，支持 GFM 和 $\LaTeX$ 公式。  
+除了图片，因为想不到怎么实现（
 
-Read Wolf 是一个基于 Vue 3 + TypeScript + Vite 构建的静态博客站点。仓库内置 Markdown 文章预处理脚本，能够从 `posts/` 目录生成公开可访问的文章与标签索引，配合前端页面实现文章浏览、代码高亮、数学公式渲染以及多语言支持。
+## 字体 CDN 声明
 
-## 内容管理
+注明原作是好习惯哦
 
-### 文章上传
+- 思源宋体：<https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css>
+- Maple Mono：<https://fontsapi.zeoseven.com/442/main/result.css>
 
-1. 在 `posts/` 新增 Markdown 文件，文件名建议与 Markdown 一级标题一致。
+## 部署教程
+
+不会除了我还有人用吧......  
+嘛，放在这里也可以避免自己忘了怎么传文章了。
+
+### 包管理
+
+记得先装好**pnpm**，强烈推荐！
+
+```bash
+npm i -g pnpm  # -g 是全局安装
+```
+
+### 内容配置
+
+#### 文章上传
+
+1. 在 `posts/` 新增 Markdown 文件，文件名建议与 Markdown 一级标题一致。_当然你可以从别的地方复制过来，我就是这样做的_
 2. 每篇文章需包含 Front Matter，例如：
 
    ```markdown
@@ -22,11 +41,13 @@ Read Wolf 是一个基于 Vue 3 + TypeScript + Vite 构建的静态博客站点�
    这里是文章内容。
    ```
 
-   其中，`dates` 字段请采用`YYYY-MM-DD`的形式编写，tags 规则如上。
+   其中，必填的 `dates` 字段请采用 `YYYY-MM-DD` 的形式编写。  
+   `tags` 字段也是必填的，没有就留空 `tags: []` ，
 
-3. 运行 `pnpm prebuild` 生成索引 json（`article-index.json` 和 `tags.json`）。
+3. 运行 `pnpm prebuild` 生成索引 json（`article-index.json` 和 `tags.json`）。  
+   这一步可以省略，因为即使不生成也会在上传的时候生成的。
 
-### 网站设置
+#### 网站设置
 
 更改位于`src\data`下的`site-settings.json`文件，例如：
 
@@ -40,7 +61,9 @@ Read Wolf 是一个基于 Vue 3 + TypeScript + Vite 构建的静态博客站点�
 }
 ```
 
-## 部署指南 GitHub Pages（gh-pages 分支）
+如果你不想要任意的一项或是多项，那就**留空**，别~~手贱~~删了。
+
+### 使用 GitHub Pages（gh-pages 分支）部署
 
 1. 确保已配置仓库的 `gh-pages` 分支及 GitHub Pages。
 2. 运行：
@@ -49,18 +72,6 @@ Read Wolf 是一个基于 Vue 3 + TypeScript + Vite 构建的静态博客站点�
    pnpm publish
    ```
 
-   该命令会完成类型检查、打包，并将 `dist/` 推送至 `gh-pages` 分支。
+   **Tip**: 这会清除所有在 `dist/posts` 中导出的文章
 
-## 目录结构
-
-```
-read-wolf/
-├─ posts/                 # 原始 Markdown 文章
-├─ public/
-│  ├─ posts/              # 预构建生成的公开文章
-│  └─ vite.svg
-├─ scripts/prebuild.ts    # 文章索引生成脚本
-├─ src/                   # 前端源代码
-├─ dist/                  # 生产构建产物（执行 build 后生成）
-└─ package.json
-```
+3. 稍微等一下就能在 Github Pages 里看到了

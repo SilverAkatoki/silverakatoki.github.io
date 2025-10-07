@@ -1,6 +1,6 @@
 @import "highlight.js/styles/github.css";
 @import "katex/dist/katex.min.css";
-@import "../../assets/styles/markdown.css";
+@import url("../../assets/styles/markdown.css");
 
 
 .article-error {

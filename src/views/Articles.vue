@@ -51,7 +51,7 @@ const sortedArticles = computed<ArticleMetadata[]>(() =>
 }
 
 .main_title {
-  font-family: var(--font-family-serif);
+  font-family: "Source Han Serif CN VF";
   font-size: 42px;
   font-weight: bolder;
   margin: 20px;

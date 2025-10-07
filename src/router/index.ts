@@ -26,7 +26,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHashHistory(),  // 改成 Hash 模式，要不然 Github Pages 刷新就 404 了
   routes
 });
 

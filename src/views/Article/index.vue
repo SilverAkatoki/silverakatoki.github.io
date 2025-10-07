@@ -1,5 +1,6 @@
+<!-- eslint-disable vue/no-v-html -->
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 
 import { useRoute } from "vue-router";
 
@@ -17,6 +18,66 @@ const loadError = ref<string | null>(null);
 
 const { meta, sanitizedHtml, setArticleContent, clearArticleContent } =
   useArticleContent();
+
+const articleContentRef = ref<HTMLElement | null>(null);
+
+// 抓出脚注的跳转地址
+const extractFootnoteTargetId = (anchor: HTMLAnchorElement): string | null => {
+  const rawHash = anchor.hash || anchor.getAttribute("href") || "";
+  if (!rawHash.startsWith("#") || rawHash.length <= 1) {
+    return null;
+  }
+
+  try {
+    return decodeURIComponent(rawHash.slice(1));
+  } catch {
+    return rawHash.slice(1);
+  }
+};
+
+// 避免默认的跳转，会炸路由，井号共用了
+const handleFootnoteClick = (event: MouseEvent): void => {
+  const eventTarget = event.target;
+  if (!(eventTarget instanceof Element)) {
+    return;
+  }
+
+  // 直接抓 DOM
+  const anchor = eventTarget.closest<HTMLAnchorElement>(
+    "a[data-footnote-ref], a[data-footnote-backref]" // 抓样式，要不然抓不到
+  );
+  if (!anchor) {
+    return;
+  }
+
+  const targetId = extractFootnoteTargetId(anchor);
+  if (!targetId || typeof window === "undefined") {
+    return;
+  }
+
+  const destination = window.document.getElementById(targetId);
+  if (!destination) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  destination.scrollIntoView({ behavior: "instant", block: "center" });
+};
+
+watch(
+  articleContentRef,
+  (element, previousElement) => {
+    previousElement?.removeEventListener("click", handleFootnoteClick);
+    element?.addEventListener("click", handleFootnoteClick);
+  },
+  { immediate: true }
+);
+
+onBeforeUnmount(() => {
+  articleContentRef.value?.removeEventListener("click", handleFootnoteClick);
+});
 
 const resolvePostUrl = (uuid: string): string => {
   const base = import.meta.env.BASE_URL ?? "/";
@@ -86,16 +147,18 @@ watch(
                 <span v-for="tag in meta.tags" :key="tag" class="article-tag">
                   {{ tag }}
                 </span>
-                <span
-                  v-if="meta.tags.length === 0"
-                  class="article-meta-empty"
-                >暂无标签</span>
+                <span v-if="meta.tags.length === 0" class="article-meta-empty"
+                  >暂无标签</span
+                >
               </dd>
             </div>
           </dl>
         </aside>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <section class="article-content" v-html="sanitizedHtml" />
+        <section
+          ref="articleContentRef"
+          class="article-content"
+          v-html="sanitizedHtml"
+        ></section>
       </article>
     </template>
   </main>
