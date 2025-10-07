@@ -18,6 +18,12 @@ const loadError = ref<string | null>(null);
 const { meta, sanitizedHtml, setArticleContent, clearArticleContent } =
   useArticleContent();
 
+const resolvePostUrl = (uuid: string): string => {
+  const base = import.meta.env.BASE_URL ?? "/";
+  const baseUrl = new URL(base, `${window.location.origin}/`);
+  return new URL(`posts/${uuid}.md`, baseUrl).toString();
+};
+
 const fetchArticle = async (uuid: string): Promise<void> => {
   loadError.value = null;
 
@@ -30,12 +36,7 @@ const fetchArticle = async (uuid: string): Promise<void> => {
   }
 
   try {
-    const baseUrl = import.meta.env.BASE_URL ?? "/";
-    const normalizedBaseUrl = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
-    // 确保不会多出斜杠
-
-    const postUrl = `${normalizedBaseUrl}posts/${uuid}.md`;
-    // 请求的是 posts 文件夹下的文件
+    const postUrl = resolvePostUrl(uuid);
 
     const response = await fetch(postUrl);
     if (!response.ok) {
