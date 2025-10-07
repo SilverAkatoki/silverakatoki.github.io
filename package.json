@@ -9,7 +9,7 @@
     "build": "pnpm prebuild && vue-tsc -b && vite build",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",
-    "publish": "vue-tsc -b && vite build && gh-pages -d dist",
+    "publish": "pnpm build && gh-pages -d dist",
     "lint": "eslint . --ext .vue,.js,.ts",
     "lint:fix": "eslint . --ext .vue,.js,.ts --fix"
   },
