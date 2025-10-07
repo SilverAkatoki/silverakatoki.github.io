@@ -53,7 +53,7 @@ const fetchArticle = async (uuid: string): Promise<void> => {
 };
 
 watch(
-  () => route.params.uuid as string | undefined,
+  () => route.query.uuid as string,
   async newUuid => {
     if (!newUuid) {
       loadError.value = "未找到文章";

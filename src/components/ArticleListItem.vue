@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import type { ArticleMetadata } from "@/types/article";
 
 defineProps<{
@@ -10,7 +10,7 @@ defineProps<{
   <div class="article-item">
     <router-link
       v-if="article.uuid"
-      :to="`/article/${article.uuid}`"
+      :to="{ path: '/article', query: { uuid: article.uuid } }"
       class="article-title"
     >
       {{ article.title }}
