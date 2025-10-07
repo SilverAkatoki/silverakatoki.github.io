@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "pnpm prebuild && vite",
     "prebuild": "ts-node scripts/prebuild.ts",
-    "build": "vite prebuild && vue-tsc -b && vite build",
+    "build": "pnpm prebuild && vue-tsc -b && vite build",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",
     "publish": "vue-tsc -b && vite build && gh-pages -d dist",
@@ -48,3 +48,4 @@
     "vue-tsc": "^2.2.12"
   }
 }
+
