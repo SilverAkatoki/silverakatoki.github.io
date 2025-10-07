@@ -5,7 +5,7 @@ export interface ArticleMetadata {
   tags: string[];
 };
 
-export type Article = {
+export interface Article {
   metadata: ArticleMetadata;
   content: string;
 };

@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
   <div class="title-container">
     <div class="title">404</div>
@@ -8,8 +10,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts"></script>
 
 <style scoped>
 .title-container {

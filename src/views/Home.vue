@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
-import { siteInfo } from "@/site-info.json";
+import { siteInfo } from "@/data/site-settings.json";
 import { getRandomSentence } from "@/utils/dateUtils";
 
 const randomSentence = ref<string>("");
@@ -13,7 +13,7 @@ onMounted(() => {
 
 <template>
   <div class="title-container">
-    <p class="main-title">阅狼集录</p>
+    <p class="main-title">狼迹拾遗</p>
     <p class="sub-title">银晓的博客</p>
     <p class="sentence">{{ randomSentence }}</p>
     <div class="time-info-container">
@@ -133,3 +133,5 @@ onMounted(() => {
   margin-right: 2px;
 }
 </style>
+
+

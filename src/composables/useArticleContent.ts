@@ -7,7 +7,8 @@ import { marked } from "marked";
 import markedFootnote from "marked-footnote";
 
 import type {
-  ArticleMetadata, Article
+  Article,
+  ArticleMetadata
 } from "@/types/article";
 
 
@@ -140,6 +141,7 @@ export const useArticleContent = () => {
     sanitizedHtml,
     async () => {
       if (typeof window === "undefined") {
+        // 等渲染完了在高亮
         return;
       }
 
@@ -150,13 +152,14 @@ export const useArticleContent = () => {
         try {
           hljs.highlightElement(el as HTMLElement);
         } catch {
-          // 忽略错误
+          // 吞掉
         }
       });
     },
     { immediate: true }
   );
 
+  // 这里和下面两个都是为了维护组合式函数的状态
   const clearArticleContent = (): void => {
     mdText.value = "";
     renderedHtml.value = "";
@@ -175,3 +178,4 @@ export const useArticleContent = () => {
     clearArticleContent
   };
 };
+

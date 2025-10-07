@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { onMounted } from "vue";
 
 onMounted(() => {
@@ -11,10 +11,10 @@ onMounted(() => {
 
 <template>
   <footer>
-    <p>Copyright ©银晓 SilverAkatoki</p>
+    <p>Copyright © {{ new Date().getFullYear() }} SilverAkatsuki</p>
     <div id="site_viewer_counter_container">
-      <span><span>已有</span><span id="busuanzi_value_site_uv" /><span>人曾造访本站（UV）</span></span>
-      <span><span>共查看了</span><span id="busuanzi_value_site_pv" /><span>次（PV）</span></span>
+      <span><span>访客</span><span id="busuanzi_value_site_uv" /><span>人（UV）</span></span>
+      <span><span>浏览</span><span id="busuanzi_value_site_pv" /><span>次（PV）</span></span>
     </div>
   </footer>
 </template>

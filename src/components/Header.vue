@@ -1,10 +1,10 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 </script>
 
 <template>
   <header>
     <div id="head_container">
-      <router-link to="/">SilverAkatoki's Blog</router-link>
+      <router-link to="/">SilverAkatsuki's Blog</router-link>
     </div>
     <div id="navigation_bar">
       <ul id="navigation_buttons">
@@ -24,28 +24,15 @@
             class="navigation_button"
             :class="{ inactivated: $route.path === '/articles' }"
             :style="$route.path === '/articles' ? 'pointer-events:none;' : ''"
-            title="存放往期文章的地方"
+            title="这里可以查看所有文章"
           >
             归档
-          </router-link>
-        </li>
-        <li>
-          <router-link
-            to="/utils"
-            class="navigation_button"
-            :class="{ inactivated: $route.path === '/utils' }"
-            :style="$route.path === '/utils' ? 'pointer-events:none;' : ''"
-            title="小玩具"
-          >
-            小玩具
           </router-link>
         </li>
       </ul>
     </div>
   </header>
 </template>
-
-
 
 <style scoped>
 #head_container {
@@ -102,5 +89,5 @@
     text-decoration: none;
 }
 
-/* 链接样式已移至全局样式 */
+/* 顶部导航栏整体样式 */
 </style>

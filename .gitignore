@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+articles-index.json
+tags.json
+public/*
+posts/*

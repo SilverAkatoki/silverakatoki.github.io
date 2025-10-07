@@ -81,7 +81,6 @@ const commonTypeScriptRules = {
 
 // 公共 JavaScript 规则
 const commonJavaScriptRules = {
-  "no-console": "warn",
   "no-debugger": "error",
   "no-unused-vars": "off",
   "prefer-const": "error",

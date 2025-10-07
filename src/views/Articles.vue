@@ -1,14 +1,22 @@
-﻿<script setup lang="ts">
-import { articles } from "@/articles-index.json";
+<script setup lang="ts">
+import { computed } from "vue";
+
 import ArticleShowItem from "@/components/ArticleShowItem.vue";
+import { articles } from "@/data/articles-index.json";
+
+import type { ArticleMetadata } from "@/types/article";
+
+const sortedArticles = computed<ArticleMetadata[]>(() =>
+  [...articles].sort((x, y) => y.date.localeCompare(x.date))
+);
 </script>
 
 <template>
   <div id="title_container">
     <p id="main_title">归档</p>
     <div id="article-count-container">
-      <span>银晓已经写了</span>
-      <span id="article-count">{{ Object.keys(articles).length }}</span>
+      <span>已经写了</span>
+      <span id="article-count">{{ sortedArticles.length }}</span>
       <span>篇文章</span>
     </div>
   </div>
@@ -18,7 +26,7 @@ import ArticleShowItem from "@/components/ArticleShowItem.vue";
       <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em" />
       <div id="articles-container">
         <article-show-item
-          v-for="article in articles"
+          v-for="article in sortedArticles"
           :key="article.uuid"
           :article="article"
         />
@@ -60,37 +68,6 @@ import ArticleShowItem from "@/components/ArticleShowItem.vue";
 
 #article-count {
   font-weight: bold;
-}
-
-#tags-container {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  background-color: var(--background-gray);
-  border: 2px solid var(--border-gray);
-  border-radius: 5px;
-}
-
-#tags-title {
-  margin: 5px;
-  margin-bottom: 10px;
-  font-size: x-large;
-  font-weight: bold;
-  letter-spacing: -2px;
-}
-
-#tags {
-  margin: 5px;
-  list-style: none;
-}
-
-#tags > li {
-  display: inline;
-  margin-right: 0.5em;
-}
-
-#tag-empty {
-  font-style: italic;
-  color: var(--text-gray);
 }
 
 #articles-title {

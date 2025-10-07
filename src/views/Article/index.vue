@@ -3,8 +3,8 @@ import { ref, watch } from "vue";
 
 import { useRoute } from "vue-router";
 
-import { articles as articleEntries } from "@/articles-index.json";
 import { useArticleContent } from "@/composables/useArticleContent";
+import { articles as articleEntries } from "@/data/articles-index.json";
 
 import type { ArticleMetadata } from "@/types/article";
 
@@ -15,17 +15,27 @@ const articleIndex = new Map<string, ArticleMetadata>(
 const route = useRoute();
 const loadError = ref<string | null>(null);
 
-const { sanitizedHtml, setArticleContent, clearArticleContent } = useArticleContent();
+const { meta, sanitizedHtml, setArticleContent, clearArticleContent } =
+  useArticleContent();
 
 const fetchArticle = async (uuid: string): Promise<void> => {
   loadError.value = null;
 
-  const articleMetadata = articleIndex.get(uuid)!;
+  const articleMetadata = articleIndex.get(uuid);
+
+  if (!articleMetadata) {
+    loadError.value = "未找到对应文章";
+    clearArticleContent();
+    return;
+  }
 
   try {
     const baseUrl = import.meta.env.BASE_URL ?? "/";
     const normalizedBaseUrl = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+    // 确保不会多出斜杠
+
     const postUrl = `${normalizedBaseUrl}posts/${uuid}.md`;
+    // 请求的是 posts 文件夹下的文件
 
     const response = await fetch(postUrl);
     if (!response.ok) {
@@ -36,7 +46,7 @@ const fetchArticle = async (uuid: string): Promise<void> => {
 
     setArticleContent({ metadata: articleMetadata, content });
   } catch (error) {
-    loadError.value = error instanceof Error ? error.message : "读取文章失败";
+    loadError.value = error instanceof Error ? error.message : "获取文章失败";
     clearArticleContent();
   }
 };
@@ -45,7 +55,7 @@ watch(
   () => route.params.uuid as string | undefined,
   async newUuid => {
     if (!newUuid) {
-      loadError.value = "未找到对应的文章";
+      loadError.value = "未找到文章";
       clearArticleContent();
       return;
     }
@@ -60,8 +70,32 @@ watch(
   <main class="article">
     <p v-if="loadError" class="article-error">{{ loadError }}</p>
     <template v-else>
-      <!-- eslint-disable-next-line vue/no-v-html -->
-      <article class="markdown-body" v-html="sanitizedHtml" />
+      <article class="markdown-body">
+        <aside v-if="meta" class="article-meta-pane">
+          <dl class="article-meta-list">
+            <div class="article-meta-item">
+              <dt class="article-meta-term">日期</dt>
+              <dd class="article-meta-detail article-meta-date">
+                {{ meta.date }}
+              </dd>
+            </div>
+            <div class="article-meta-item">
+              <dt class="article-meta-term">标签</dt>
+              <dd class="article-meta-detail">
+                <span v-for="tag in meta.tags" :key="tag" class="article-tag">
+                  {{ tag }}
+                </span>
+                <span
+                  v-if="meta.tags.length === 0"
+                  class="article-meta-empty"
+                >暂无标签</span>
+              </dd>
+            </div>
+          </dl>
+        </aside>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <section class="article-content" v-html="sanitizedHtml" />
+      </article>
     </template>
   </main>
 </template>
