@@ -32,8 +32,14 @@ onMounted(() => {
         {{ siteInfo.readme }}
       </div>
       <div class="readme-divider" />
-      <p class="friend-link-title">友链</p>
-      <ul v-for="link in siteInfo.friendLink" :key="link.url" class="friend-links">
+      <p v-if="siteInfo.friendLink.length !== 0" class="friend-link-title">
+        友链
+      </p>
+      <ul
+        v-for="link in siteInfo.friendLink"
+        :key="link.url"
+        class="friend-links"
+      >
         <li class="friend-link-item">
           <a :href="link.url" title="前往他的博客">{{ link.name }}</a>
         </li>
@@ -133,5 +139,3 @@ onMounted(() => {
   margin-right: 2px;
 }
 </style>
-
-

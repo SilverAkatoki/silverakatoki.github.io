@@ -2,9 +2,11 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
+import { v4 as uuidv4 } from "uuid";
 import pkg from "yaml-front-matter";
 
-// 预构建脚本：扫描 posts 目录，生成公开文章内容与索引文件。
+const { loadFront } = pkg;
+
 interface ArticleMetadata {
   uuid: string;
   title: string;
@@ -12,25 +14,22 @@ interface ArticleMetadata {
   tags: string[];
 };
 
-const { loadFront } = pkg;
-
 const ROOT_DIR = process.cwd();
-const POSTS_DIR = path.join(ROOT_DIR, "posts");
-const PUBLIC_POSTS_DIR = path.join(ROOT_DIR, "public", "posts");
+
+// 文章目录
+const INPUT_POSTS_DIR = path.join(ROOT_DIR, "posts");
+const OUTPUT_POST_DIR = path.join(ROOT_DIR, "public", "posts");
+
+// 配置目录
 const DATA_DIR = path.join(ROOT_DIR, "src", "data");
 const ARTICLES_INDEX_PATH = path.join(DATA_DIR, "articles-index.json");
 const TAGS_INDEX_PATH = path.join(DATA_DIR, "tags.json");
 
-// 去掉 Markdown 正文前部的空行，避免干扰标题推断。
-const leadingBlankLinesPattern = /^\s*(?:\r?\n)+/;
-
 const log = (message: string): void => console.log(`[prebuild] ${message}`);
 
-
-const toDateString = (value: unknown, sourcePath: string): string => {
-  // 将 front matter 中的 date 信息规整为 YYYY-MM-DD 字符串。
+const toDateString = (value: unknown, title: string): string => {
   if (value === undefined || value === null) {
-    throw new Error(`${sourcePath} 中缺少 "date" 字段`);
+    throw new Error(`${title} 中缺少 "date" 字段`);
   }
 
   if (value instanceof Date) {
@@ -38,22 +37,24 @@ const toDateString = (value: unknown, sourcePath: string): string => {
   }
 
   const normalized = String(value).trim();
-  if (!normalized) {
-    throw new Error(`${sourcePath} 中缺少 "date" 字段`);
+
+  if (!RegExp("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])").test(normalized)) {
+    throw new Error(`${title} 中 "date" 字段 ${value} 不符合 YYYY-MM-DD 的格式`);
   }
 
   return normalized;
 };
 
 const collectTags = (...fields: unknown[]): string[] => {
-  // 支持数组、逗号分隔字符串等写法，并自动去重。
   const tags = new Set<string>();
 
+  // 递归把标签抽出来
   const visit = (value: unknown): void => {
     if (value === undefined || value === null) {
       return;
     }
 
+    // 形如 [xxx, yyy] 或是 ["xxx", "yyy"] 都可以
     if (Array.isArray(value)) {
       value.forEach(visit);
       return;
@@ -70,13 +71,15 @@ const collectTags = (...fields: unknown[]): string[] => {
   return [...tags];
 };
 
-const inferTitle = (candidate: unknown, body: string, fallback: string): string => {
-  // 优先使用 front matter 中的 title，否则取正文首个非空行（或其 Markdown 标题）。
-  if (typeof candidate === "string") {
-    const trimmed = candidate.trim();
-    if (trimmed) {
-      return trimmed;
+const inferTitle = (candidate: unknown, body: string): string => {
+  if (candidate !== undefined && candidate !== null) {
+    const title = String(candidate).trim();
+
+    if (!title) {
+      throw new Error("front matter 中 \"title\" 字段不可为空");
     }
+
+    return title;
   }
 
   for (const line of body.split(/\r?\n/)) {
@@ -85,25 +88,31 @@ const inferTitle = (candidate: unknown, body: string, fallback: string): string 
       continue;
     }
 
-    const headingMatch = /^#{1,6}\s*(.+)$/.exec(trimmed);
-    return headingMatch ? headingMatch[1].trim() : trimmed;
+    const headingMatch = /^#\s+(.+)$/.exec(trimmed);
+    if (headingMatch) {
+      return headingMatch[1].trim();
+    }
   }
 
-  return fallback;
+  throw new Error("文章不存在一级标题");
 };
 
+/**
+* 格式化输出 JSON，2 空格缩进
+*/
 const writeJson = async (filePath: string, data: unknown): Promise<void> => {
-  // 输出带缩进的 JSON，便于手动检阅。
   const content = `${JSON.stringify(data, null, 2)}\n`;
   await fs.writeFile(filePath, content, "utf8");
 };
 
 const main = async (): Promise<void> => {
-  log("开始预构建 Markdown 文章");
-  await fs.mkdir(PUBLIC_POSTS_DIR, { recursive: true });
+  log("开始预构建文章与索引");
+
+  await fs.rm(OUTPUT_POST_DIR, { recursive: true, force: true });
+  await fs.mkdir(OUTPUT_POST_DIR, { recursive: true });
   await fs.mkdir(DATA_DIR, { recursive: true });
 
-  const entries = await fs.readdir(POSTS_DIR, { withFileTypes: true });
+  const entries = await fs.readdir(INPUT_POSTS_DIR, { withFileTypes: true });
   const markdownFiles = entries.filter(entry => entry.isFile() && entry.name.endsWith(".md"));
 
   log(`发现 ${markdownFiles.length} 个 Markdown 文件`);
@@ -112,29 +121,43 @@ const main = async (): Promise<void> => {
   const tagSet = new Set<string>();
 
   for (const file of markdownFiles) {
-    const uuid = file.name.replace(/\.md$/, "");
-    const sourcePath = path.join(POSTS_DIR, file.name);
-    const targetPath = path.join(PUBLIC_POSTS_DIR, file.name);
+    log(`正在处理 ${file.name}`);
+    try {
+      const uuid = uuidv4();  // 全随机 UUID
 
-    const rawContent = await fs.readFile(sourcePath, "utf8");
-    const parsed = loadFront(rawContent);
+      const sourcePath = path.join(INPUT_POSTS_DIR, file.name);
+      const targetPath = path.join(OUTPUT_POST_DIR, `${uuid}.md`);
 
-    const body = parsed.__content.replace(leadingBlankLinesPattern, "");
-    const date = toDateString(parsed.date, sourcePath);
-    const title = inferTitle(parsed.title, body, uuid);
-    const tags = collectTags(parsed.tags, parsed.tag);
-    tags.forEach(tag => tagSet.add(tag));
+      const rawContent = await fs.readFile(sourcePath, "utf8");
 
-    await fs.writeFile(targetPath, `${body.trimEnd()}\n`, "utf8");
-    articles.push({ uuid, title, date, tags });
+      const parsed = loadFront(rawContent);
+
+      // 去掉空行
+      const body = parsed.__content.replace(/^\s*(?:\r?\n)+/, "");
+
+      const title = inferTitle(parsed.title, body);
+      const date = toDateString(parsed.date, `${title}.md`);
+      const tags = collectTags(parsed.tags, parsed.tag);
+
+      tags.forEach(tag => tagSet.add(tag));
+
+      await fs.writeFile(targetPath, `${body.trimEnd()}\n`, "utf8");
+
+      articles.push({ uuid, title, date, tags });
+    } catch (err: unknown) {
+      log(`${err}`);
+      log("已跳过该文章");
+    }
   }
 
+  // 根据 UUID 决定相同日期时的排序
   articles.sort((a, b) => {
     const dateDiff = b.date.localeCompare(a.date);
     return dateDiff !== 0 ? dateDiff : a.uuid.localeCompare(b.uuid);
   });
 
-  const sortedTags = [...tagSet].sort((a, b) => a.localeCompare(b));
+  const sortedTags = [...tagSet].sort((a, b
+  ) => a.localeCompare(b));
 
   await writeJson(ARTICLES_INDEX_PATH, { articles });
   await writeJson(TAGS_INDEX_PATH, { tags: sortedTags });
@@ -144,8 +167,13 @@ const main = async (): Promise<void> => {
   log("预构建完成");
 };
 
-main().catch(error => {
-  const detail = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-  console.error(`[prebuild] 发生错误：${detail}`);
-  process.exitCode = 1;
-});
+main().then(
+  () => { /* empty */ },
+  (err) => {
+    log("预构建失败");
+    log(err);
+  }
+);
+
+
+

@@ -1,8 +1,8 @@
 ﻿<script setup lang="ts">
-import type { Article } from "@/type";
+import type { ArticleMetadata } from "@/types/article";
 
 defineProps<{
-  article: Article;
+  article: ArticleMetadata;
 }>();
 </script>
 
