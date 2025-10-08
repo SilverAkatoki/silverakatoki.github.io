@@ -1,13 +1,31 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
-import { siteInfo } from "@/data/site-settings.json";
-import { getRandomSentence } from "@/utils/dateUtils";
+import siteSettings from "@/data/site-settings.json";
+import { calcDaysDiff, getRandomItem } from "@/utils/utils";
+
+import Readme from "@/components/Readme.vue";
+
+import type { FriendLink, SiteInfo } from "@/types/home";
+
+import { articles } from "@/data/articles-index.json";
+
+// 防止删干净后的处理
+const siteInfo: SiteInfo = {
+  titleSentences: siteSettings.siteInfo?.titleSentences ?? [],
+  friendLink: Array.isArray(siteSettings.siteInfo?.friendLink)
+    ? (siteSettings.siteInfo.friendLink as FriendLink[])
+    : []
+};
 
 const randomSentence = ref<string>("");
 
+const lastUpdateDate = articles[0].date;  // 约定俗称列表里最前面的是最近写的内容
+
+const laatUpdateDateDiff = calcDaysDiff(lastUpdateDate);
+
 onMounted(() => {
-  randomSentence.value = getRandomSentence(siteInfo.titleSentences);
+  randomSentence.value = getRandomItem(siteInfo.titleSentences);
 });
 </script>
 
@@ -18,10 +36,10 @@ onMounted(() => {
     <p class="sentence">{{ randomSentence }}</p>
     <div class="time-info-container">
       <span class="time-label">上次更新</span>
-      <span class="last-update-date">114-514</span>
+      <span class="last-update-date">{{ lastUpdateDate }}</span>
       <span class="separator">|</span>
       <span class="time-label">距今</span>
-      <span class="last-update-date-distance">1919</span>
+      <span class="last-update-date-distance">{{ laatUpdateDateDiff }}</span>
       <span>天</span>
     </div>
   </div>
@@ -29,9 +47,9 @@ onMounted(() => {
     <div class="readme-container">
       <p class="readme-title">README</p>
       <div class="readme-text">
-        {{ siteInfo.readme }}
+        <readme />
       </div>
-      <div class="readme-divider" />
+      <div v-if="siteInfo.friendLink.length !== 0" class="readme-divider" />
       <p v-if="siteInfo.friendLink.length !== 0" class="friend-link-title">
         友链
       </p>
@@ -114,7 +132,7 @@ onMounted(() => {
 
 .readme-title,
 .friend-link-title {
-  margin: 5px;
+  margin: 10px;
   margin-bottom: 10px;
   font-size: x-large;
   font-weight: bold;
@@ -122,7 +140,7 @@ onMounted(() => {
 }
 
 .readme-text {
-  margin: 5px;
+  margin: 10px;
 }
 
 .readme-divider {
@@ -130,7 +148,7 @@ onMounted(() => {
 }
 
 .friend-links {
-  margin: 5px;
+  margin: 10px;
   list-style: none;
 }
 

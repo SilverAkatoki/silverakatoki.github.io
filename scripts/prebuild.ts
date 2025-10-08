@@ -150,6 +150,7 @@ const main = async (): Promise<void> => {
     }
   }
 
+  // 按日期排序，最晚写的在最前面，与前端约定俗成
   // 根据 UUID 决定相同日期时的排序
   articles.sort((a, b) => {
     const dateDiff = b.date.localeCompare(a.date);

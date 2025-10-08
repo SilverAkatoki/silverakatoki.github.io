@@ -61,8 +61,6 @@ npm i -g pnpm  # -g 是全局安装
 }
 ```
 
-如果你不想要任意的一项或是多项，那就**留空**，别~~手贱~~删了。
-
 ### 使用 GitHub Pages（gh-pages 分支）部署
 
 1. 确保已配置仓库的 `gh-pages` 分支及 GitHub Pages。
