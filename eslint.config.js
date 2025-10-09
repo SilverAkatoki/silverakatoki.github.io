@@ -194,7 +194,7 @@ export default [
       "vue/no-unused-refs": "error",
 
       // Vue 通用规则
-      "vue/no-vhtml": "allow", // 不开全给你黄了
+      "vue/no-vhtml": "off",
       "vue/multi-word-component-names": "off",
       "vue/no-unused-vars": "error",
       "vue/attribute-hyphenation": ["error", "always"],

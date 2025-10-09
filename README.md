@@ -27,7 +27,7 @@ npm i -g pnpm  # -g 是全局安装
 
 #### 文章上传
 
-1. 在 `posts/` 新增 Markdown 文件，文件名建议与 Markdown 一级标题一致。_当然你可以从别的地方复制过来，我就是这样做的_
+1. 在 `/posts/` 新增 Markdown 文件 _当然你可以从别的地方复制过来，我就是这样做的_，文件名建议与 Markdown 一级标题一致。
 2. 每篇文章需包含 Front Matter，例如：
 
    ```markdown
@@ -45,21 +45,30 @@ npm i -g pnpm  # -g 是全局安装
    `tags` 字段也是必填的，没有就留空 `tags: []` ，
 
 3. 运行 `pnpm prebuild` 生成索引 json（`article-index.json` 和 `tags.json`）。  
-   这一步可以省略，因为即使不生成也会在上传的时候生成的。
+   这一步可以省略，因为即使不生成也会在发布的时候自动生成。
 
 #### 网站设置
 
-更改位于`src\data`下的`site-settings.json`文件，例如：
+更改位于`/src/data`下的`site-settings.json`文件，例如：
 
 ```json
 {
   "siteInfo": {
-    "readme": "自我介绍",
     "titleSentences": ["标题下", "随机展示的", "句子"],
     "friendLink": [{ "name": "友链", "url": "https://your.friend.link/" }]
+  },
+  "prebuildSettings": {
+    "articlePublishedStateDefault": false
   }
 }
 ```
+
+`articlePublishedStateDefault` 字段为在文章的 YAML front matter 中未含有 `published` 字段时的默认行为  
+字段值为 `false` 时默认不导出
+
+#### Readme 部分
+
+在 `/src/view/Readme.vue` 组件内更改，方便自定义所以提了出来
 
 ### 使用 GitHub Pages（gh-pages 分支）部署
 
@@ -70,6 +79,6 @@ npm i -g pnpm  # -g 是全局安装
    pnpm publish
    ```
 
-   **Tip**: 这会清除所有在 `dist/posts` 中导出的文章
+   **Tip**: 这会清除所有在 `dist` 与 `public/posts` 中文件名已被更改成 uuid 的文章
 
 3. 稍微等一下就能在 Github Pages 里看到了

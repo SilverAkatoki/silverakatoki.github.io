@@ -1,9 +1,11 @@
-import fs from "node:fs/promises";
+﻿import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
 import { v4 as uuidv4 } from "uuid";
 import pkg from "yaml-front-matter";
+
+import siteInfo from "../src/data/site-settings.json" with { type: "json" };
 
 const { loadFront } = pkg;
 
@@ -38,7 +40,7 @@ const toDateString = (value: unknown, title: string): string => {
 
   const normalized = String(value).trim();
 
-  if (!RegExp("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])").test(normalized)) {
+  if (!/\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])/.test(normalized)) {
     throw new Error(`${title} 中 "date" 字段 ${value} 不符合 YYYY-MM-DD 的格式`);
   }
 
@@ -76,7 +78,7 @@ const inferTitle = (candidate: unknown, body: string): string => {
     const title = String(candidate).trim();
 
     if (!title) {
-      throw new Error("front matter 中 \"title\" 字段不可为空");
+      throw new Error("YAML front matter 中 \"title\" 字段若填写则不可为空");
     }
 
     return title;
@@ -134,6 +136,12 @@ const main = async (): Promise<void> => {
 
       // 去掉空行
       const body = parsed.__content.replace(/^\s*(?:\r?\n)+/, "");
+
+      const hasPublished = parsed.published || siteInfo.prebuildSettings.articlePublishedStateDefault;
+
+      if (!hasPublished) {
+        throw new Error("读取到 published 字段为 false");
+      }
 
       const title = inferTitle(parsed.title, body);
       const date = toDateString(parsed.date, `${title}.md`);

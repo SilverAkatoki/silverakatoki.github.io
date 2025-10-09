@@ -1,6 +1,10 @@
-{
+﻿{
   "siteInfo": {
     "titleSentences": ["unknown", "null", "nullptr", "None", "undefined", "NULL"],
     "friendLink": []
+  },
+  "prebuildSettings": {
+    "articlePublishedStateDefault": false
   }
 }
+

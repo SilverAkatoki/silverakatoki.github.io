@@ -8,6 +8,15 @@ const ROOT_DIR = process.cwd();
 
 const DIST_DIR = path.join(ROOT_DIR, "dist");
 
+
 await fs.rm(DIST_DIR, { recursive: true, force: true });
 
-log("已清除 dist 内容");
+log("已清除 dist 构建成果");
+
+const PUBLIC_DIR = path.join(ROOT_DIR, "public");
+const TEMP_POSTS_DIR = path.join(PUBLIC_DIR, "posts");
+
+await fs.rm(TEMP_POSTS_DIR, { recursive: true, force: true });
+await fs.mkdir(TEMP_POSTS_DIR, { recursive: true });
+
+log("已清除 public/posts 中所有临时 md 文件");

@@ -23,7 +23,7 @@ const sortedArticles = computed<ArticleMetadata[]>(() =>
   <div class="body_container">
     <div class="articles">
       <p class="articles-title">文章目录</p>
-      <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em" />
+      <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em"></div>
       <div class="articles-container">
         <article-list-item
           v-for="article in sortedArticles"

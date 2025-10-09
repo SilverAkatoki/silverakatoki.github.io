@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-v-html -->
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch } from "vue";
 
@@ -147,9 +146,7 @@ watch(
                 <span v-for="tag in meta.tags" :key="tag" class="article-tag">
                   {{ tag }}
                 </span>
-                <span v-if="meta.tags.length === 0" class="article-meta-empty"
-                  >暂无标签</span
-                >
+                <span v-if="meta.tags.length === 0" class="article-meta-empty">暂无标签</span>
               </dd>
             </div>
           </dl>

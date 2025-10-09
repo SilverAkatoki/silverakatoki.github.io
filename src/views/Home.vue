@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
+import ArticleListItem from "@/components/ArticleListItem.vue";
+import Readme from "@/components/Readme.vue";
+import { articles } from "@/data/articles-index.json";
 import siteSettings from "@/data/site-settings.json";
 import { calcDaysDiff, getRandomItem } from "@/utils/utils";
 
-import Readme from "@/components/Readme.vue";
-import ArticleListItem from "@/components/ArticleListItem.vue";
 
 import type { FriendLink, SiteInfo } from "@/types/home";
 
-import { articles } from "@/data/articles-index.json";
 
 // 防止删干净后的处理
 const siteInfo: SiteInfo = {
@@ -51,7 +51,7 @@ onMounted(() => {
       <div class="readme-text">
         <readme />
       </div>
-      <div v-if="siteInfo.friendLink.length !== 0" class="readme-divider" />
+      <div v-if="siteInfo.friendLink.length !== 0" class="readme-divider"></div>
       <p v-if="siteInfo.friendLink.length !== 0" class="friend-link-title">
         友链
       </p>
@@ -67,7 +67,7 @@ onMounted(() => {
     </div>
     <div class="articles">
       <p class="articles-title">最新更新</p>
-      <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em" />
+      <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em"></div>
       <div class="articles-container">
         <article-list-item
           v-for="article in latestArticles"
