@@ -5,6 +5,7 @@ import siteSettings from "@/data/site-settings.json";
 import { calcDaysDiff, getRandomItem } from "@/utils/utils";
 
 import Readme from "@/components/Readme.vue";
+import ArticleListItem from "@/components/ArticleListItem.vue";
 
 import type { FriendLink, SiteInfo } from "@/types/home";
 
@@ -20,7 +21,8 @@ const siteInfo: SiteInfo = {
 
 const randomSentence = ref<string>("");
 
-const lastUpdateDate = articles[0].date;  // 约定俗称列表里最前面的是最近写的内容
+const lastUpdateDate = articles[0].date; // 约定俗称列表里最前面的是最近写的内容
+const latestArticles = articles.slice(0, 5);
 
 const laatUpdateDateDiff = calcDaysDiff(lastUpdateDate);
 
@@ -63,10 +65,29 @@ onMounted(() => {
         </li>
       </ul>
     </div>
+    <div class="articles">
+      <p class="articles-title">最新更新</p>
+      <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em" />
+      <div class="articles-container">
+        <article-list-item
+          v-for="article in latestArticles"
+          :key="article.uuid"
+          :article="article"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.articles-title {
+  margin: 5px;
+  margin-top: 25px;
+  margin-bottom: 5px;
+  font-size: 25px;
+  letter-spacing: 1px;
+}
+
 .body-container {
   margin-left: var(--body-container-margin);
   margin-right: var(--body-container-margin);

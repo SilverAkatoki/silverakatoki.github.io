@@ -165,24 +165,6 @@
   text-decoration: underline;
 }
 
-@media (max-width: 720px) {
-  .markdown-body {
-    font-size: 15px;
-    padding: 16px;
-  }
-
-  .markdown-body table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
-
-  .footnotes {
-    margin: 1.5rem 16px 0;
-    padding: 1.25rem 1rem 0;
-  }
-}
-
 .markdown-body blockquote {
   margin: 0 0 1rem;
   padding: 0rem 1rem;
