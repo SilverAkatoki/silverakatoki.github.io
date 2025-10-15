@@ -135,9 +135,15 @@ watch(
         <aside v-if="meta" class="article-meta-pane">
           <dl class="article-meta-list">
             <div class="article-meta-item">
-              <dt class="article-meta-term">日期</dt>
+              <dt class="article-meta-term">创建日期</dt>
               <dd class="article-meta-detail article-meta-date">
-                {{ meta.date }}
+                {{ meta.createdDate }}
+              </dd>
+            </div>
+             <div class="article-meta-item">
+              <dt class="article-meta-term">最近更新日期</dt>
+              <dd class="article-meta-detail article-meta-date">
+                {{ meta.updatedDate }}
               </dd>
             </div>
             <div class="article-meta-item">

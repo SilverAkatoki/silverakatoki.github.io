@@ -40,7 +40,7 @@
 
 .article-meta-term {
   margin: 0;
-  flex: 0 0 3em;
+  flex: 0 0 7em;  /* 如果元信息描述多了就改这里 */
   text-align: right;
   font-weight: 600;
   font-size: 0.75rem;

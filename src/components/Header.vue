@@ -1,10 +1,11 @@
 ﻿<script setup lang="ts">
+import siteSettings from "@/data/site-settings.json";
 </script>
 
 <template>
   <header>
     <div id="head_container">
-      <router-link to="/">SilverAkatsuki's Blog</router-link>
+      <router-link to="/">{{ siteSettings.siteInfo.header }}</router-link>
     </div>
     <div id="navigation_bar">
       <ul id="navigation_buttons">

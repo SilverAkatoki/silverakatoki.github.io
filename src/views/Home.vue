@@ -21,7 +21,7 @@ const siteInfo: SiteInfo = {
 
 const randomSentence = ref<string>("");
 
-const lastUpdateDate = articles[0].date; // 约定俗称列表里最前面的是最近写的内容
+const lastUpdateDate = articles[0].updatedDate; // 约定俗称列表里最前面的是最近写的内容
 const latestArticles = articles.slice(0, 5);
 
 const laatUpdateDateDiff = calcDaysDiff(lastUpdateDate);
@@ -33,8 +33,8 @@ onMounted(() => {
 
 <template>
   <div class="title-container">
-    <p class="main-title">狼迹拾遗</p>
-    <p class="sub-title">银晓的博客</p>
+    <p class="main-title">{{ siteSettings.siteInfo.title }}</p>
+    <p class="sub-title">{{ siteSettings.siteInfo.subTitle }}</p>
     <p class="sentence">{{ randomSentence }}</p>
     <div class="time-info-container">
       <span class="time-label">上次更新</span>

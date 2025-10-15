@@ -1,7 +1,8 @@
 export interface ArticleMetadata {
   uuid: string;
   title: string;
-  date: string;
+  createdDate: string;
+  updatedDate: string;
   tags: string[];
 };
 

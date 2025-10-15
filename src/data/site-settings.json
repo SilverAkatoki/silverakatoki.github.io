@@ -1,5 +1,9 @@
 ﻿{
   "siteInfo": {
+    "header": "SilverAkatsuki's blog",
+    "title": "狼迹拾遗",
+    "subTitle": "银晓的博客",
+    "bottomCopyRightName": "SilverAkatsuki",
     "titleSentences": ["unknown", "null", "nullptr", "None", "undefined", "NULL"],
     "friendLink": []
   },

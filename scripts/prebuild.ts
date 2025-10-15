@@ -12,7 +12,9 @@ const { loadFront } = pkg;
 interface ArticleMetadata {
   uuid: string;
   title: string;
-  date: string;
+  createdDate: string;
+  updatedDate: string;
+  category: string;
   tags: string[];
 };
 
@@ -29,11 +31,14 @@ const TAGS_INDEX_PATH = path.join(DATA_DIR, "tags.json");
 
 const log = (message: string): void => console.log(`[prebuild] ${message}`);
 
-const toDateString = (value: unknown, title: string): string => {
+const getCreateDateString = (value: unknown): string => {
   if (value === undefined || value === null) {
-    throw new Error(`${title} 中缺少 "date" 字段`);
+    throw new Error("缺少 \"createDate\" 字段");
   }
+  return toDateString(value);
+};
 
+const toDateString = (value: unknown): string => {
   if (value instanceof Date) {
     return value.toISOString().slice(0, 10);
   }
@@ -41,7 +46,7 @@ const toDateString = (value: unknown, title: string): string => {
   const normalized = String(value).trim();
 
   if (!/\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])/.test(normalized)) {
-    throw new Error(`${title} 中 "date" 字段 ${value} 不符合 YYYY-MM-DD 的格式`);
+    throw new Error(`日期字段 ${value} 不符合 YYYY-MM-DD 的格式`);
   }
 
   return normalized;
@@ -144,24 +149,26 @@ const main = async (): Promise<void> => {
       }
 
       const title = inferTitle(parsed.title, body);
-      const date = toDateString(parsed.date, `${title}.md`);
+      const createdDate = getCreateDateString(parsed.createdDate);
+      const updatedDate = parsed.updatedDate !== undefined ? toDateString(parsed.updatedDate) : createdDate;
       const tags = collectTags(parsed.tags, parsed.tag);
+      const category = parsed.category || "";
 
       tags.forEach(tag => tagSet.add(tag));
 
       await fs.writeFile(targetPath, `${body.trimEnd()}\n`, "utf8");
 
-      articles.push({ uuid, title, date, tags });
+      articles.push({ uuid, title, createdDate, updatedDate, category, tags });
     } catch (err: unknown) {
       log(`${err}`);
       log("已跳过该文章");
     }
   }
 
-  // 按日期排序，最晚写的在最前面，与前端约定俗成
+  // 按修改日期排序，最晚写的在最前面，与前端约定俗成
   // 根据 UUID 决定相同日期时的排序
   articles.sort((a, b) => {
-    const dateDiff = b.date.localeCompare(a.date);
+    const dateDiff = b.updatedDate.localeCompare(a.updatedDate);
     return dateDiff !== 0 ? dateDiff : a.uuid.localeCompare(b.uuid);
   });
 
@@ -172,12 +179,12 @@ const main = async (): Promise<void> => {
   await writeJson(TAGS_INDEX_PATH, { tags: sortedTags });
 
   log(`已写入 ${articles.length} 条文章索引到 ${path.relative(ROOT_DIR, ARTICLES_INDEX_PATH)}`);
-  log(`已写入 ${sortedTags.length} 个唯一标签到 ${path.relative(ROOT_DIR, TAGS_INDEX_PATH)}`);
+  log(`已写入 ${sortedTags.length} 个标签到 ${path.relative(ROOT_DIR, TAGS_INDEX_PATH)}`);
   log("预构建完成");
 };
 
 main().then(
-  () => { /* empty */ },
+  () => { /* 占位置 */ },
   (err) => {
     log("预构建失败");
     log(err);

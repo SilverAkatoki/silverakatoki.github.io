@@ -1,17 +1,10 @@
 ﻿<script setup lang="ts">
-import { onMounted } from "vue";
-
-onMounted(() => {
-  const script = document.createElement("script");
-  script.src = "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
-  script.async = true;
-  document.head.appendChild(script);
-});
+import siteSettings from "@/data/site-settings.json";
 </script>
 
 <template>
   <footer>
-    <p>Copyright © {{ new Date().getFullYear() }} SilverAkatsuki</p>
+    <p>Copyright © {{ new Date().getFullYear() }} {{ siteSettings.siteInfo.bottomCopyRightName }}</p>
   </footer>
 </template>
 

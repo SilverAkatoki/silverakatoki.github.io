@@ -17,7 +17,7 @@ defineProps<{
     </router-link>
     <span v-else class="article-title">{{ article.title }}</span>
     <span class="article-time">
-      {{ article.date }}
+      {{ article.updatedDate }}
     </span>
   </div>
 </template>
