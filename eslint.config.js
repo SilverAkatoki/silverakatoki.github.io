@@ -23,6 +23,7 @@ const browserGlobals = {
   MouseEvent: "readonly",
   Event: "readonly",
   CustomEvent: "readonly"
+  clearTimeout: "readonly",
 };
 
 // 公共导入顺序配置

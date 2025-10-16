@@ -13,14 +13,25 @@ defineProps<{
       :to="{ path: '/article', query: { uuid: article.uuid } }"
       class="article-title"
     >
-      {{ article.title }}
+      <div class="title-field" v-html="article.title"></div>
     </router-link>
-    <span v-else class="article-title">{{ article.title }}</span>
     <span class="article-time">
       {{ article.updatedDate }}
     </span>
   </div>
 </template>
+
+<style>
+.title-field > span {
+  display: inline-block;
+  /* 用 border 会让元素位移，换一个实现 */
+  box-shadow: inset 0 0 0 1px silver;
+  background: transparent;
+}
+.title-field:hover > span {
+  text-decoration: underline;
+}
+</style>
 
 <style scoped>
 .article-item {
@@ -47,6 +58,7 @@ defineProps<{
 }
 
 .article-title {
+  display: inline-block;
   flex: 1;
   font-size: large;
   font-weight: bold;
