@@ -4,7 +4,7 @@ export const calcDaysDiff = (dateStr: string): number => {
   const currentDate = new Date();
   const diffTime = Math.abs(currentDate.getTime() - targetDate.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
+  return diffDays - 1;  // 会多一天，所以得减一下
 };
 
 export const getRandomItem = <T>(arr: T[]): T => {
