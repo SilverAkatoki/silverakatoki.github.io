@@ -2,6 +2,7 @@
 import { ref, watch } from "vue";
 
 import { debounce } from "ts-debounce";
+import SortRulesSelector from "@/components/SortRulesSelector.vue";
 
 const title = ref("");
 
@@ -22,6 +23,20 @@ watch(title, newValue => {
     <div class="filter-container">
       <div class="search-container">
         <div class="search-field">
+          <svg
+            class="search-icon"
+            aria-hidden="true"
+            focusable="false"
+            data-prefix="far"
+            data-icon="magnifying-glass"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+          >
+            <path
+              d="M368 208A160 160 0 1 0 48 208a160 160 0 1 0 320 0zM337.1 371.1C301.7 399.2 256.8 416 208 416C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208c0 48.8-16.8 93.7-44.9 129.1L505 471c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L337.1 371.1z"
+            ></path>
+          </svg>
           <input
             v-model="title"
             class="search-input"
@@ -29,6 +44,9 @@ watch(title, newValue => {
             placeholder="搜索文章标题"
           />
         </div>
+      </div>
+      <div class="sort-rules-selector-container">
+        <sort-rules-selector />
       </div>
     </div>
   </div>
@@ -38,48 +56,60 @@ watch(title, newValue => {
 .filter-container {
   flex: 1 1 320px;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  --search-field-height: 1.75rem;
 }
 
 .search-container {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  padding: 1rem;
 }
 
 .search-label {
-  font-size: 0.8rem;
+  font-size: 8px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .search-field {
+  position: relative;
   display: flex;
-  gap: 0.5rem;
   align-items: center;
+  height: var(--search-field-height);
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  width: 1.1rem;
+  height: 1.1rem;
+  pointer-events: none;
+  transform: translateY(-50%);
+  fill: #7a7a7a;
 }
 
 .search-input {
   flex: 1 1 auto;
-  padding: 0.45rem 0.65rem;
-  font-size: 0.95rem;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0.3rem 0.6rem 0.3rem 2.1rem;
+  font-size: 14px;
 }
 
 .search-input::-webkit-search-cancel-button {
   appearance: none;
 }
 
-.search-button {
-  padding: 0.45rem 0.9rem;
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  cursor: pointer;
+.sort-rules-selector-container {
+  display: flex;
+  align-items: stretch;
+  height: var(--search-field-height);
 }
 
-.search-button:active {
-  transform: translateY(1px);
-}
 </style>
