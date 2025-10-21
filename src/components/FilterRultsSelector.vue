@@ -1,26 +1,7 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 
-const isOpen = ref(false);
-const containerRef = ref<HTMLElement | null>(null);
-
-const toggleDropdown = () => (isOpen.value = !isOpen.value);
-const closeDropdown = () => (isOpen.value = false);
-
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as Node | null;
-  if (containerRef.value && target && !containerRef.value.contains(target)) {
-    closeDropdown();
-  }
-};
-
-onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener("click", handleClickOutside);
-});
+const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 </script>
 
 <template>

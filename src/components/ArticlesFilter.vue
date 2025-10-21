@@ -46,7 +46,7 @@ watch(title, newValue => {
           />
         </div>
       </div>
-      <div class="rules-selector-container disabled">
+      <div class="rules-selector-container">
         <sort-rules-selector />
       </div>
       <div class="rules-selector-container disabled">

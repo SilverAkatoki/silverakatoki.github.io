@@ -34,7 +34,8 @@ const extractFootnoteTargetId = (anchor: HTMLAnchorElement): string | null => {
   }
 };
 
-// 避免默认的跳转，会炸路由，井号共用了
+// 避免默认的跳转，会炸路由
+// 井号被路由和跳转共用了
 const handleFootnoteClick = (event: MouseEvent): void => {
   const eventTarget = event.target;
   if (!(eventTarget instanceof Element)) {

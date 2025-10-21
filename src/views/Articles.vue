@@ -56,9 +56,10 @@ const sortedArticles = computed<ArticleMetadata[]>(() =>
     <div class="filter-container">
       <articles-filter @submit="value => (titlePattern = value)" />
       <div class="article-count-container">
-        <span>已经写了</span>
-        <span class="article-count">{{ articles.length }}</span>
-        <span>篇文章</span>
+        <span v-show="titlePattern === ''">已经写了</span>
+        <span v-show="titlePattern !== ''">已筛选出</span>
+        <span class="article-count">{{ sortedArticles.length }}</span>
+        <span >篇文章</span>
       </div>
     </div>
     <div class="articles">
