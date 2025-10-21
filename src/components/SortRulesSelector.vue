@@ -1,26 +1,20 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
+import { ref } from "vue";
 
-const isOpen = ref(false);
-const containerRef = ref<HTMLElement | null>(null);
+const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
-const toggleDropdown = () => (isOpen.value = !isOpen.value);
-const closeDropdown = () => (isOpen.value = false);
+const selectedRules = ref("默认排序");
+const isAscending = ref(false);
 
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as Node | null;
-  if (containerRef.value && target && !containerRef.value.contains(target)) {
-    closeDropdown();
+const handleSelectRule = (rule: string) => {
+  if (selectedRules.value !== rule) {
+    selectedRules.value = rule;
+    isAscending.value = false;
+  } else {
+    isAscending.value = !isAscending.value;
   }
 };
-
-onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener("click", handleClickOutside);
-});
 </script>
 
 <template>
@@ -42,13 +36,23 @@ onBeforeUnmount(() => {
       </svg>
     </button>
     <div class="dropdown-content" v-show="isOpen">
-      <div class="dropdown-item">
+      <div
+        class="dropdown-item"
+        :class="{ selected: selectedRules === '默认排序' }"
+        @click="handleSelectRule('默认排序')"
+      >
         <span class="item-description">默认排序</span>
-        <div class="item-type default">✓</div>
+        <div class="item-type default" v-if="selectedRules === '默认排序'">
+          ✓
+        </div>
       </div>
-      <div class="dropdown-item">
+      <div
+        class="dropdown-item"
+        :class="{ selected: selectedRules === '创建日期' }"
+        @click="handleSelectRule('创建日期')"
+      >
         <span class="item-description">创建日期</span>
-        <div class="item-type">
+        <div class="item-type" v-if="selectedRules === '创建日期'">
           <svg
             aria-hidden="true"
             focusable="false"
@@ -58,6 +62,7 @@ onBeforeUnmount(() => {
             role="img"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 576 512"
+            v-if="isAscending"
           >
             <path
               d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 48c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312z"
@@ -72,6 +77,7 @@ onBeforeUnmount(() => {
             role="img"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 576 512"
+            v-else="isAscending"
           >
             <path
               d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 480h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24z"
@@ -155,8 +161,8 @@ onBeforeUnmount(() => {
   align-items: center;
 }
 
-.dropdown-item:hover {
-  background-color: #ccc;
+.dropdown-item.selected {
+  background-color: #eee;
 }
 
 .dropdown-item > .item-description {
