@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 
 import { debounce } from "ts-debounce";
 import SortRulesSelector from "@/components/SortRulesSelector.vue";
+import FilterRultsSelector from "@/components/FilterRultsSelector.vue";
 
 const title = ref("");
 
@@ -45,8 +46,11 @@ watch(title, newValue => {
           />
         </div>
       </div>
-      <div class="sort-rules-selector-container">
+      <div class="rules-selector-container disabled">
         <sort-rules-selector />
+      </div>
+      <div class="rules-selector-container disabled">
+        <filter-rults-selector />
       </div>
     </div>
   </div>
@@ -66,6 +70,7 @@ watch(title, newValue => {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  width: 320px;
 }
 
 .search-label {
@@ -106,10 +111,14 @@ watch(title, newValue => {
   appearance: none;
 }
 
-.sort-rules-selector-container {
+.rules-selector-container {
   display: flex;
   align-items: stretch;
   height: var(--search-field-height);
 }
 
+.rules-selector-container.disabled {
+  pointer-events: none;
+  color: #7a7a7a;
+}
 </style>

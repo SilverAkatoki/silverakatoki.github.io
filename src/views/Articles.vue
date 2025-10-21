@@ -51,14 +51,16 @@ const sortedArticles = computed<ArticleMetadata[]>(() =>
 <template>
   <div class="title_container">
     <p class="main_title">归档</p>
-    <div class="article-count-container">
-      <span>已经写了</span>
-      <span class="article-count">{{ articles.length }}</span>
-      <span>篇文章</span>
-    </div>
   </div>
   <div class="body_container">
-    <articles-filter @submit="value => (titlePattern = value)" />
+    <div class="filter-container">
+      <articles-filter @submit="value => (titlePattern = value)" />
+      <div class="article-count-container">
+        <span>已经写了</span>
+        <span class="article-count">{{ articles.length }}</span>
+        <span>篇文章</span>
+      </div>
+    </div>
     <div class="articles">
       <div
         style="
@@ -82,7 +84,14 @@ const sortedArticles = computed<ArticleMetadata[]>(() =>
 </template>
 
 <style scoped>
+.filter-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .body_container {
+  margin-top: 2em;
   margin-left: var(--body-container-margin);
   margin-right: var(--body-container-margin);
   min-height: 100%;

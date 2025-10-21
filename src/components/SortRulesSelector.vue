@@ -4,10 +4,6 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 const isOpen = ref(false);
 const containerRef = ref<HTMLElement | null>(null);
 
-const emit = defineEmits<{
-  select: [rule: string];
-}>();
-
 const toggleDropdown = () => (isOpen.value = !isOpen.value);
 const closeDropdown = () => (isOpen.value = false);
 
@@ -30,7 +26,20 @@ onBeforeUnmount(() => {
 <template>
   <div ref="containerRef" class="drop-button-container">
     <button type="button" class="drop-button" @click.stop="toggleDropdown">
-      ↓↑
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        data-prefix="far"
+        data-icon="arrow-down-arrow-up"
+        class="button-icon"
+        role="img"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 576 512"
+      >
+        <path
+          d="M47 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L81 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM399 39l-96 96c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l55-55V456c0 13.3 10.7 24 24 24s24-10.7 24-24V113.9l55 55c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9L433 39c-9.4-9.4-24.6-9.4-33.9 0z"
+        ></path>
+      </svg>
     </button>
     <div class="dropdown-content" v-show="isOpen">
       <div class="dropdown-item">
@@ -75,6 +84,14 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped lang="css">
+.button-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  pointer-events: none;
+  fill: #7a7a7a;
+  display: block;
+}
+
 .search-icon {
   position: absolute;
   right: 5px;
