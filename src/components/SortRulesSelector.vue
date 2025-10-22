@@ -1,25 +1,15 @@
 ﻿<script setup lang="ts">
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 import { computed, ref, watch } from "vue";
+import type {
+  SortDirection,
+  SortProperty,
+  SortRule,
+  SortState
+} from "@/types/sortRuleSelector";
+import { SortKeys, DEFAULT_SORT_DIRECTION } from "@/types/sortRuleSelector";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
-
-const SortKeys = {
-  DEFAULT: "default" as const,
-  CREATED_DATE: "createdDate" as const,
-  UPDATED_DATE: "updatedDate" as const
-} as const;
-
-type SortDirection = "ASC" | "DESC";
-type SortProperty = (typeof SortKeys)[keyof typeof SortKeys];
-
-type SortRuleVariant = "default" | "directional";
-
-interface SortRule {
-  key: SortProperty;
-  label: string;
-  variant: SortRuleVariant;
-}
 
 const sortRules: SortRule[] = [
   { key: SortKeys.DEFAULT, label: "默认排序", variant: "default" },
@@ -29,18 +19,20 @@ const sortRules: SortRule[] = [
 
 const sortProperty = ref<SortProperty>(SortKeys.DEFAULT);
 
-const DEFAULT_SORT_DIRECTION: SortDirection = "DESC" as const;
 const sortDirection = ref<SortDirection>(DEFAULT_SORT_DIRECTION);
 
 const selectedRule = computed(
-  () => sortRules.find((rule) => rule.key === sortProperty.value) ?? sortRules[0]
+  () => sortRules.find(rule => rule.key === sortProperty.value) ?? sortRules[0]
 );
 const isDefaultSort = computed(() => sortProperty.value === SortKeys.DEFAULT);
 
 const emit = defineEmits(["sort-state"]);
 
 watch([sortProperty, sortDirection], ([property, direction]) =>
-  emit("sort-state", { sortProperty: property, sortDirection: direction })
+  emit("sort-state", {
+    sortProperty: property,
+    sortDirection: direction
+  } as SortState)
 );
 
 const handleSelectRule = (property: SortProperty) => {
@@ -77,7 +69,11 @@ const handleSelectRule = (property: SortProperty) => {
           aria-hidden="true"
           focusable="false"
           data-prefix="far"
-          :data-icon="sortDirection === 'ASC' ? 'arrow-down-short-wide' : 'arrow-down-wide-short'"
+          :data-icon="
+            sortDirection === 'ASC'
+              ? 'arrow-down-short-wide'
+              : 'arrow-down-wide-short'
+          "
           class="button-icon"
           role="img"
           xmlns="http://www.w3.org/2000/svg"

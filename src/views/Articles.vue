@@ -4,16 +4,31 @@ import { computed, ref } from "vue";
 import ArticleListItem from "@/components/ArticleListItem.vue";
 import ArticlesFilter from "@/components/ArticlesFilter.vue";
 import { articles } from "@/data/articles-index.json";
-
+import {
+  DEFAULT_SORT_STATE,
+  SortKeys,
+  type SortState
+} from "@/types/sortRuleSelector";
 import type { ArticleMetadata } from "@/types/article";
 
 const titlePattern = ref<string>("");
+const sortState = ref<SortState>({ ...DEFAULT_SORT_STATE });
+// 默认值要深拷贝一个出来
 
-const HIGHLIGHT_TAG_PATTERN = /<span>(.*?)<\/span>/gi; // 全局且不区分大小写匹配
+// 用 === 比较的是对象，始终为 false，提出来同时确保默认值的时候排序对象无影响
+const isDefaultSort = computed<boolean>(
+  () =>
+    (sortState.value.sortProperty === DEFAULT_SORT_STATE.sortProperty &&
+      sortState.value.sortDirection === DEFAULT_SORT_STATE.sortDirection) ||
+    sortState.value.sortProperty === SortKeys.DEFAULT
+);
+
+const HIGHLIGHT_TAG_PATTERN = /<span>(.*?)<\/span>/gi; // 这是负责清理高亮的正则
+
+// 转义正则特殊字符
+// 要不然输个 \w 进去就报错
 const escapeRegExp = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-// 转义正则特殊字符
-// 输个 \w 进去就爆了
 
 const filtratedArticles = computed<ArticleMetadata[]>(() => {
   const keyword = titlePattern.value.trim();
@@ -40,12 +55,35 @@ const filtratedArticles = computed<ArticleMetadata[]>(() => {
   }));
 });
 
-const sortedArticles = computed<ArticleMetadata[]>(() =>
-  // 先这样排着
-  filtratedArticles.value.sort((x, y) =>
-    y.updatedDate.localeCompare(x.updatedDate)
-  )
-);
+const sortedArticles = computed<ArticleMetadata[]>(() => {
+  const items = [...filtratedArticles.value];
+  const { sortDirection, sortProperty } = sortState.value;
+
+  if (sortProperty === SortKeys.DEFAULT) {
+    return items.sort((a, b) => b.updatedDate.localeCompare(a.updatedDate));
+  }
+
+  const directionFactor = sortDirection === "ASC" ? 1 : -1;
+  if (SortKeys.CREATED_DATE === sortProperty) {
+    return items.sort(
+      (a, b) => directionFactor * a.createdDate.localeCompare(b.createdDate)
+    );
+  } else if (SortKeys.UPDATED_DATE === sortProperty) {
+    return items.sort(
+      (a, b) => directionFactor * a.updatedDate.localeCompare(b.updatedDate)
+    );
+  } else {
+    throw Error("Invalid sort property");
+  }
+});
+
+const handleFilterSubmit = (
+  newTitlePattern: string,
+  newSortState: SortState
+) => {
+  sortState.value = { ...newSortState };
+  titlePattern.value = newTitlePattern;
+};
 </script>
 
 <template>
@@ -54,12 +92,12 @@ const sortedArticles = computed<ArticleMetadata[]>(() =>
   </div>
   <div class="body_container">
     <div class="filter-container">
-      <articles-filter @submit="value => (titlePattern = value)" />
+      <articles-filter @submit="handleFilterSubmit" />
       <div class="article-count-container">
-        <span v-show="titlePattern === ''">已经写了</span>
-        <span v-show="titlePattern !== ''">已筛选出</span>
+        <span v-if="titlePattern === '' && isDefaultSort">已经写了</span>
+        <span v-else>已筛选出</span>
         <span class="article-count">{{ sortedArticles.length }}</span>
-        <span >篇文章</span>
+        <span>篇文章</span>
       </div>
     </div>
     <div class="articles">

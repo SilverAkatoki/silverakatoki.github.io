@@ -5,17 +5,25 @@ import { debounce } from "ts-debounce";
 import SortRulesSelector from "@/components/SortRulesSelector.vue";
 import FilterRultsSelector from "@/components/FilterRultsSelector.vue";
 
+import { DEFAULT_SORT_STATE } from "@/types/sortRuleSelector";
+import type { SortState } from "@/types/sortRuleSelector";
+
 const title = ref("");
+const sortState = ref<SortState>(DEFAULT_SORT_STATE);
 
 const emit = defineEmits<{
-  submit: [title: string];
+  submit: [title: string, sortState: SortState];
 }>();
 
-watch(title, newValue => {
-  debounce(newValue => {
-    emit("submit", newValue);
-  }, 50)(newValue);
-});
+watch(
+  [title, sortState],
+  ([newTitle, newSortState]) => {
+    debounce((currentTitle: string, currentSortState: SortState) => {
+      emit("submit", currentTitle, currentSortState);
+    }, 50)(newTitle, newSortState);
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -47,7 +55,7 @@ watch(title, newValue => {
         </div>
       </div>
       <div class="rules-selector-container">
-        <sort-rules-selector @sort-state="rules => console.log(rules)" />
+        <sort-rules-selector @sort-state="state => (sortState = state)" />
       </div>
       <div class="rules-selector-container disabled">
         <filter-rults-selector />
