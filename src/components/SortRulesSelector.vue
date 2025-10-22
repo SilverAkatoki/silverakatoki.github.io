@@ -1,18 +1,36 @@
 <script setup lang="ts">
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
-const selectedRules = ref("默认排序");
-const isAscending = ref(false);
+const SortKeys = {
+  DEFAULT: "default" as const,
+  CREATED_DATE: "createdDate" as const,
+  UPDATED_DATE: "updatedDate" as const
+} as const;
 
-const handleSelectRule = (rule: string) => {
-  if (selectedRules.value !== rule) {
-    selectedRules.value = rule;
-    isAscending.value = false;
+type SortDirection = "ASC" | "DESC";
+type SortProperty = (typeof SortKeys)[keyof typeof SortKeys];
+
+const sortProperty = ref<SortProperty>(SortKeys.DEFAULT);
+
+const DEFAULT_SORT_DIRECTION: SortDirection = "DESC" as const;
+const sortDirection = ref<SortDirection>(DEFAULT_SORT_DIRECTION);
+
+
+const emit = defineEmits(["sort-state"]);
+
+watch([sortProperty, sortDirection], () =>
+  emit("sort-state", { sortProperty, sortDirection })
+);
+
+const handleSelectRule = (property: SortProperty) => {
+  if (sortProperty.value !== property) {
+    sortProperty.value = property;
+    sortDirection.value = DEFAULT_SORT_DIRECTION;
   } else {
-    isAscending.value = !isAscending.value;
+    sortDirection.value = sortDirection.value === "ASC" ? "DESC" : "ASC";
   }
 };
 </script>
@@ -38,31 +56,39 @@ const handleSelectRule = (rule: string) => {
     <div class="dropdown-content" v-show="isOpen">
       <div
         class="dropdown-item"
-        :class="{ selected: selectedRules === '默认排序' }"
-        @click="handleSelectRule('默认排序')"
+        :class="{ selected: sortProperty === SortKeys.DEFAULT }"
+        @click="handleSelectRule(SortKeys.DEFAULT)"
       >
         <span class="item-description">默认排序</span>
-        <div class="item-type default" v-if="selectedRules === '默认排序'">
-          ✓
+        <div
+          class="item-type default"
+          :class="{ active: sortProperty === SortKeys.DEFAULT }"
+          aria-hidden="true"
+        >
+          <span class="item-check">✓</span>
         </div>
       </div>
       <div
         class="dropdown-item"
-        :class="{ selected: selectedRules === '创建日期' }"
-        @click="handleSelectRule('创建日期')"
+        :class="{ selected: sortProperty === SortKeys.CREATED_DATE }"
+        @click="handleSelectRule(SortKeys.CREATED_DATE)"
       >
         <span class="item-description">创建日期</span>
-        <div class="item-type" v-if="selectedRules === '创建日期'">
+        <div
+          class="item-type"
+          :class="{ active: sortProperty === SortKeys.CREATED_DATE }"
+          aria-hidden="true"
+        >
           <svg
             aria-hidden="true"
             focusable="false"
             data-prefix="far"
             data-icon="arrow-down-short-wide"
-            class="search-icon"
+            class="item-icon"
             role="img"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 576 512"
-            v-if="isAscending"
+            v-if="sortDirection === 'ASC'"
           >
             <path
               d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 48c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312z"
@@ -73,11 +99,54 @@ const handleSelectRule = (rule: string) => {
             focusable="false"
             data-prefix="far"
             data-icon="arrow-down-wide-short"
-            class="search-icon"
+            class="item-icon"
             role="img"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 576 512"
-            v-else="isAscending"
+            v-else
+          >
+            <path
+              d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 480h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+      <div
+        class="dropdown-item"
+        :class="{ selected: sortProperty === SortKeys.UPDATED_DATE }"
+        @click="handleSelectRule(SortKeys.UPDATED_DATE)"
+      >
+        <span class="item-description">修改日期</span>
+        <div
+          class="item-type"
+          :class="{ active: sortProperty === SortKeys.UPDATED_DATE }"
+          aria-hidden="true"
+        >
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            data-prefix="far"
+            data-icon="arrow-down-short-wide"
+            class="item-icon"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 576 512"
+            v-if="sortDirection === 'ASC'"
+          >
+            <path
+              d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 48c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312z"
+            ></path>
+          </svg>
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            data-prefix="far"
+            data-icon="arrow-down-wide-short"
+            class="item-icon"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 576 512"
+            v-else
           >
             <path
               d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 480h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24z"
@@ -96,16 +165,6 @@ const handleSelectRule = (rule: string) => {
   pointer-events: none;
   fill: #7a7a7a;
   display: block;
-}
-
-.search-icon {
-  position: absolute;
-  right: 5px;
-  width: 1.1rem;
-  height: 1.1rem;
-  pointer-events: none;
-  transform: translateY(-50%);
-  fill: #7a7a7a;
 }
 
 .drop-button-container {
@@ -170,6 +229,30 @@ const handleSelectRule = (rule: string) => {
 }
 
 .dropdown-item > .item-type {
-  display: inline;
+  width: 1.4rem;
+  height: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  visibility: hidden;
+}
+
+.dropdown-item > .item-type.active {
+  visibility: visible;
+}
+
+.dropdown-item > .item-type > .item-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  pointer-events: none;
+  fill: #7a7a7a;
+}
+
+.dropdown-item > .item-type .item-check {
+  font-size: 0.9rem;
+  font-weight: bold;
+  line-height: 1;
+  color: #7a7a7a;
 }
 </style>
