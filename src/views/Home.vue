@@ -73,6 +73,7 @@ onMounted(() => {
           v-for="article in latestArticles"
           :key="article.uuid"
           :article="article"
+          :is-show-updated-date="true"
         />
       </div>
     </div>

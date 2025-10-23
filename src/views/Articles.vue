@@ -15,6 +15,13 @@ const titlePattern = ref<string>("");
 const sortState = ref<SortState>({ ...DEFAULT_SORT_STATE });
 // 默认值要深拷贝一个出来
 
+const isShowUpdatedDate = computed<boolean>(() => {
+  const { sortProperty } = sortState.value;
+  return (
+    sortProperty === SortKeys.DEFAULT || sortProperty === SortKeys.UPDATED_DATE
+  );
+});
+
 // 用 === 比较的是对象，始终为 false，提出来同时确保默认值的时候排序对象无影响
 const isDefaultSort = computed<boolean>(
   () =>
@@ -44,7 +51,7 @@ const filtratedArticles = computed<ArticleMetadata[]>(() => {
     return normalizedArticles;
   }
 
-  const highlightRegex = new RegExp(escapeRegExp(keyword), "gi");
+  const highlightRegex = new RegExp(escapeRegExp(keyword), "gi"); // 这是标记高亮元素的正则
 
   return normalizedArticles.map(metadata => ({
     ...metadata,
@@ -59,18 +66,19 @@ const sortedArticles = computed<ArticleMetadata[]>(() => {
   const items = [...filtratedArticles.value];
   const { sortDirection, sortProperty } = sortState.value;
 
+  // 默认按照由新到旧的更新日期排
   if (sortProperty === SortKeys.DEFAULT) {
     return items.sort((a, b) => b.updatedDate.localeCompare(a.updatedDate));
   }
 
-  const directionFactor = sortDirection === "ASC" ? 1 : -1;
+  const direction = sortDirection === "ASC" ? 1 : -1;
   if (SortKeys.CREATED_DATE === sortProperty) {
     return items.sort(
-      (a, b) => directionFactor * a.createdDate.localeCompare(b.createdDate)
+      (a, b) => direction * a.createdDate.localeCompare(b.createdDate)
     );
   } else if (SortKeys.UPDATED_DATE === sortProperty) {
     return items.sort(
-      (a, b) => directionFactor * a.updatedDate.localeCompare(b.updatedDate)
+      (a, b) => direction * a.updatedDate.localeCompare(b.updatedDate)
     );
   } else {
     throw Error("Invalid sort property");
@@ -81,7 +89,7 @@ const handleFilterSubmit = (
   newTitlePattern: string,
   newSortState: SortState
 ) => {
-  sortState.value = { ...newSortState };
+  sortState.value = { ...newSortState }; // 一定记得开新对象
   titlePattern.value = newTitlePattern;
 };
 </script>
@@ -113,6 +121,7 @@ const handleFilterSubmit = (
           v-for="article in sortedArticles"
           :key="article.uuid"
           :article="article"
+          :is-show-updated-date="isShowUpdatedDate"
         />
         <p v-if="sortedArticles.length === 0" class="empty-state">
           没有找到匹配的文章

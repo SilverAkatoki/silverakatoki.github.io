@@ -9,7 +9,7 @@ import { DEFAULT_SORT_STATE } from "@/types/sortRuleSelector";
 import type { SortState } from "@/types/sortRuleSelector";
 
 const title = ref("");
-const sortState = ref<SortState>(DEFAULT_SORT_STATE);
+const sortState = ref<SortState>({ ...DEFAULT_SORT_STATE });
 
 const emit = defineEmits<{
   submit: [title: string, sortState: SortState];

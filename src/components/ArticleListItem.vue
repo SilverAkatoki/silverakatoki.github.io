@@ -3,6 +3,7 @@ import type { ArticleMetadata } from "@/types/article";
 
 defineProps<{
   article: ArticleMetadata;
+  isShowUpdatedDate: boolean;
 }>();
 </script>
 
@@ -16,7 +17,7 @@ defineProps<{
       <div class="title-field" v-html="article.title"></div>
     </router-link>
     <span class="article-time">
-      {{ article.updatedDate }}
+      {{ isShowUpdatedDate ? article.updatedDate : article.createdDate }}
     </span>
   </div>
 </template>
