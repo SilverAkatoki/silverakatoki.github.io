@@ -102,7 +102,7 @@ const handleFilterSubmit = (
     <div class="filter-container">
       <articles-filter @submit="handleFilterSubmit" />
       <div class="article-count-container">
-        <span v-if="titlePattern === '' && isDefaultSort">已经写了</span>
+        <span v-if="titlePattern === ''">已经写了</span>
         <span v-else>已筛选出</span>
         <span class="article-count">{{ sortedArticles.length }}</span>
         <span>篇文章</span>

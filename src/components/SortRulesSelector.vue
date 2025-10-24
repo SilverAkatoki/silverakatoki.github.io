@@ -8,6 +8,9 @@ import type {
   SortState
 } from "@/types/sortRuleSelector";
 import { SortKeys, DEFAULT_SORT_DIRECTION } from "@/types/sortRuleSelector";
+import arrowDownArrowUpIconUrl from "@/assets/icons/arrow-down-arrow-up.svg";
+import arrowDownShortWideIconUrl from "@/assets/icons/arrow-down-short-wide.svg";
+import arrowDownWideShortIconUrl from "@/assets/icons/arrow-down-wide-short.svg";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
@@ -49,45 +52,24 @@ const handleSelectRule = (property: SortProperty) => {
   <div ref="containerRef" class="drop-button-container">
     <button type="button" class="drop-button" @click.stop="toggleDropdown">
       <template v-if="isDefaultSort">
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          data-prefix="far"
-          data-icon="arrow-down-arrow-up"
+        <img
+          :src="arrowDownArrowUpIconUrl"
           class="button-icon"
-          role="img"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 576 512"
-        >
-          <path
-            d="M47 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L81 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM399 39l-96 96c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l55-55V456c0 13.3 10.7 24 24 24s24-10.7 24-24V113.9l55 55c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9L433 39c-9.4-9.4-24.6-9.4-33.9 0z"
-          ></path>
-        </svg>
+          alt=""
+          aria-hidden="true"
+        />
       </template>
       <template v-else>
-        <svg
-          aria-hidden="true"
-          focusable="false"
-          data-prefix="far"
-          :data-icon="
+        <img
+          :src="
             sortDirection === 'ASC'
-              ? 'arrow-down-short-wide'
-              : 'arrow-down-wide-short'
+              ? arrowDownShortWideIconUrl
+              : arrowDownWideShortIconUrl
           "
           class="button-icon"
-          role="img"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 576 512"
-        >
-          <path
-            v-if="sortDirection === 'ASC'"
-            d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 48c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312z"
-          ></path>
-          <path
-            v-else
-            d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 480h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24z"
-          ></path>
-        </svg>
+          alt=""
+          aria-hidden="true"
+        />
         <span class="button-label">{{ selectedRule.label }}</span>
       </template>
     </button>
@@ -112,36 +94,20 @@ const handleSelectRule = (property: SortProperty) => {
             <span class="item-check">✓</span>
           </template>
           <template v-else>
-            <svg
-              aria-hidden="true"
-              focusable="false"
-              data-prefix="far"
-              data-icon="arrow-down-short-wide"
-              class="item-icon"
-              role="img"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 576 512"
+            <img
               v-if="sortDirection === 'ASC'"
-            >
-              <path
-                d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 48c-13.3 0-24 10.7-24 24s10.7 24 24 24h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312zm0 128c-13.3 0-24 10.7-24 24s10.7 24 24 24H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312z"
-              ></path>
-            </svg>
-            <svg
-              aria-hidden="true"
-              focusable="false"
-              data-prefix="far"
-              data-icon="arrow-down-wide-short"
+              :src="arrowDownShortWideIconUrl"
               class="item-icon"
-              role="img"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 576 512"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
               v-else
-            >
-              <path
-                d="M15 377l96 96c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-55 55V56c0-13.3-10.7-24-24-24s-24 10.7-24 24V398.1L49 343c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9zM312 480h48c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H424c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H488c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24zm0-128H552c13.3 0 24-10.7 24-24s-10.7-24-24-24H312c-13.3 0-24 10.7-24 24s10.7 24 24 24z"
-              ></path>
-            </svg>
+              :src="arrowDownWideShortIconUrl"
+              class="item-icon"
+              alt=""
+              aria-hidden="true"
+            />
           </template>
         </div>
       </div>
@@ -154,7 +120,6 @@ const handleSelectRule = (property: SortProperty) => {
   width: 1.1rem;
   height: 1.1rem;
   pointer-events: none;
-  fill: #7a7a7a;
   display: block;
 }
 
@@ -239,7 +204,6 @@ const handleSelectRule = (property: SortProperty) => {
   width: 1.1rem;
   height: 1.1rem;
   pointer-events: none;
-  fill: #7a7a7a;
 }
 
 .dropdown-item > .item-type .item-check {
