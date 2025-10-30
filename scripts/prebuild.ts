@@ -125,7 +125,7 @@ const main = async (): Promise<void> => {
   log(`发现 ${markdownFiles.length} 个 Markdown 文件`);
 
   const articles: ArticleMetadata[] = [];
-  const tagSet = new Set<string>();
+  const tagMap = new Map<string, number>();
 
   for (const file of markdownFiles) {
     log(`正在处理 ${file.name}`);
@@ -154,7 +154,13 @@ const main = async (): Promise<void> => {
       const tags = collectTags(parsed.tags, parsed.tag);
       const category = parsed.category || "";
 
-      tags.forEach(tag => tagSet.add(tag));
+      tags.forEach(tag => {
+        if (!tagMap.has(tag)) {
+          tagMap.set(tag, 1);
+        } else {
+          tagMap.set(tag, tagMap.get(tag)! + 1);
+        }
+      });
 
       await fs.writeFile(targetPath, `${body.trimEnd()}\n`, "utf8");
 
@@ -172,14 +178,14 @@ const main = async (): Promise<void> => {
     return dateDiff !== 0 ? dateDiff : a.uuid.localeCompare(b.uuid);
   });
 
-  const sortedTags = [...tagSet].sort((a, b
-  ) => a.localeCompare(b));
+  const serializedTags = [...tagMap].sort((a, b
+  ) => a[0].localeCompare(b[0]));
 
   await writeJson(ARTICLES_INDEX_PATH, { articles });
-  await writeJson(TAGS_INDEX_PATH, { tags: sortedTags });
+  await writeJson(TAGS_INDEX_PATH, { tags: serializedTags });
 
   log(`已写入 ${articles.length} 条文章索引到 ${path.relative(ROOT_DIR, ARTICLES_INDEX_PATH)}`);
-  log(`已写入 ${sortedTags.length} 个标签到 ${path.relative(ROOT_DIR, TAGS_INDEX_PATH)}`);
+  log(`已写入 ${serializedTags.length} 个标签到 ${path.relative(ROOT_DIR, TAGS_INDEX_PATH)}`);
   log("预构建完成");
 };
 

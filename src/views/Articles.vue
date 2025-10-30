@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 
 import ArticleListItem from "@/components/ArticleListItem.vue";
 import ArticlesFilter from "@/components/ArticlesFilter.vue";
+import ArticleTagsSelector from "@/components/ArticleTagsSelector.vue";
 import { articles } from "@/data/articles-index.json";
 import {
   DEFAULT_SORT_STATE,
@@ -10,6 +11,7 @@ import {
   type SortState
 } from "@/types/sortRuleSelector";
 import type { ArticleMetadata } from "@/types/article";
+
 
 const titlePattern = ref<string>("");
 const sortState = ref<SortState>({ ...DEFAULT_SORT_STATE });
@@ -22,13 +24,6 @@ const isShowUpdatedDate = computed<boolean>(() => {
   );
 });
 
-// 用 === 比较的是对象，始终为 false，提出来同时确保默认值的时候排序对象无影响
-const isDefaultSort = computed<boolean>(
-  () =>
-    (sortState.value.sortProperty === DEFAULT_SORT_STATE.sortProperty &&
-      sortState.value.sortDirection === DEFAULT_SORT_STATE.sortDirection) ||
-    sortState.value.sortProperty === SortKeys.DEFAULT
-);
 
 const HIGHLIGHT_TAG_PATTERN = /<span>(.*?)<\/span>/gi; // 这是负责清理高亮的正则
 
@@ -99,6 +94,7 @@ const handleFilterSubmit = (
     <p class="main_title">归档</p>
   </div>
   <div class="body_container">
+    <article-tags-selector style="margin-bottom: 1.5em;"/>
     <div class="filter-container">
       <articles-filter @submit="handleFilterSubmit" />
       <div class="article-count-container">
@@ -139,7 +135,7 @@ const handleFilterSubmit = (
 }
 
 .body_container {
-  margin-top: 2em;
+  margin-top: 0.25em;
   margin-left: var(--body-container-margin);
   margin-right: var(--body-container-margin);
   min-height: 100%;
