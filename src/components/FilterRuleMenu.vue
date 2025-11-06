@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 import filterIconUrl from "@/assets/icons/filter.svg";
-import RuleSelector from "@/components/RuleSelector.vue";
+import RuleMultiSelect from "@/components/RuleMultiSelect.vue";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 </script>
@@ -40,7 +40,7 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
               <option value="ne">不等于</option>
             </select>
             <div class="rule">
-              <rule-selector />
+              <rule-multi-select />
             </div>
             <button type="button" class="remove-rule-btn">—</button>
           </div>
@@ -55,7 +55,7 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 </template>
 
 <style scoped lang="css">
-rule-selector {
+rule-multi-select {
   height: 100%;
 }
 

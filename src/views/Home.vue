@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
-import ArticleListItem from "@/components/ArticleListItem.vue";
-import Readme from "@/components/Readme.vue";
+import ArticleSummaryItem from "@/components/ArticleSummaryItem.vue";
+import ReadmePlaceholder from "@/components/ReadmePlaceholder.vue";
 import { articles } from "@/data/articles-index.json";
 import siteSettings from "@/data/site-settings.json";
 import { calcDaysDiff, getRandomItem } from "@/utils/utils";
@@ -49,7 +49,7 @@ onMounted(() => {
     <div class="readme-container">
       <p class="readme-title">README</p>
       <div class="readme-text">
-        <readme />
+        <readme-placeholder />
       </div>
       <div v-if="siteInfo.friendLink.length !== 0" class="readme-divider"></div>
       <p v-if="siteInfo.friendLink.length !== 0" class="friend-link-title">
@@ -69,7 +69,7 @@ onMounted(() => {
       <p class="articles-title">最新更新</p>
       <div style="border-bottom: 2px solid #aaaaaa; margin-bottom: 1em"></div>
       <div class="articles-container">
-        <article-list-item
+        <article-summary-item
           v-for="article in latestArticles"
           :key="article.uuid"
           :article="article"

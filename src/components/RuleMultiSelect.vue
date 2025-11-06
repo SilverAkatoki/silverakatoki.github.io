@@ -27,6 +27,36 @@ const handleSelect = (idx: number) => {
 };
 const selectedRulesContainerRef = ref<HTMLElement | null>(null);
 let resizeObserver: ResizeObserver | null = null;
+const previousWidth = ref(0);
+
+const handleResize = (entry: ResizeObserverEntry) => {
+  const { width } = entry.contentRect;
+
+  if (width > previousWidth.value) {
+    console.log("aaa");
+  }
+
+  previousWidth.value = width;
+};
+
+onMounted(() => {
+  const el = selectedRulesContainerRef.value;
+  if (!el) return;
+
+  previousWidth.value = el.getBoundingClientRect().width;
+
+  resizeObserver = new ResizeObserver(entries => {
+    if (!entries.length) return;
+    handleResize(entries[0]);
+  });
+
+  resizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
+  resizeObserver = null;
+});
 </script>
 
 <template>

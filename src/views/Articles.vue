@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
-import ArticleListItem from "@/components/ArticleListItem.vue";
-import ArticlesFilter from "@/components/ArticlesFilter.vue";
-import ArticleTagsSelector from "@/components/ArticleTagsSelector.vue";
+import ArticleSummaryItem from "@/components/ArticleSummaryItem.vue";
+import ArticleSearchPanel from "@/components/ArticleSearchPanel.vue";
+import TagExplorerPanel from "@/components/TagExplorerPanel.vue";
 import { articles } from "@/data/articles-index.json";
 import {
   DEFAULT_SORT_STATE,
@@ -94,9 +94,9 @@ const handleFilterSubmit = (
     <p class="main_title">归档</p>
   </div>
   <div class="body_container">
-    <article-tags-selector style="margin-bottom: 1.5em;"/>
+    <tag-explorer-panel style="margin-bottom: 1.5em;" />
     <div class="filter-container">
-      <articles-filter @submit="handleFilterSubmit" />
+      <article-search-panel @submit="handleFilterSubmit" />
       <div class="article-count-container">
         <span v-if="titlePattern === ''">已经写了</span>
         <span v-else>已筛选出</span>
@@ -113,7 +113,7 @@ const handleFilterSubmit = (
         "
       ></div>
       <div class="articles-container">
-        <article-list-item
+        <article-summary-item
           v-for="article in sortedArticles"
           :key="article.uuid"
           :article="article"

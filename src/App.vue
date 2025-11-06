@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import Footer from "@/components/Footer.vue";
-import Header from "@/components/Header.vue";
+import SiteFooter from "@/components/SiteFooter.vue";
+import SiteHeader from "@/components/SiteHeader.vue";
 </script>
 
 <template>
   <div id="app">
-    <Header />
+    <SiteHeader />
     <main>
       <router-view />
     </main>
-    <Footer />
+    <SiteFooter />
   </div>
 </template>
 
