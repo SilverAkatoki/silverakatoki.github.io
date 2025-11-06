@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 
 import { debounce } from "ts-debounce";
 import SortRulesSelector from "@/components/SortRulesSelector.vue";
-import FilterRultsSelector from "@/components/FilterRultsSelector.vue";
+import FilterRulesSelector from "@/components/FilterRulesSelector.vue";
 import searchIconUrl from "@/assets/icons/search.svg";
 
 import { DEFAULT_SORT_STATE } from "@/types/sortRuleSelector";
@@ -50,8 +50,8 @@ watch(
       <div class="rules-selector-container">
         <sort-rules-selector @sort-state="state => (sortState = state)" />
       </div>
-      <div class="rules-selector-container disabled">
-        <filter-rults-selector />
+      <div class="rules-selector-container">
+        <filter-rules-selector />
       </div>
     </div>
   </div>

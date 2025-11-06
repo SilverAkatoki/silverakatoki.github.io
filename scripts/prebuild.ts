@@ -108,7 +108,7 @@ const inferTitle = (candidate: unknown, body: string): string => {
 * 格式化输出 JSON，2 空格缩进
 */
 const writeJson = async (filePath: string, data: unknown): Promise<void> => {
-  const content = `${JSON.stringify(data, null, 2)}\n`;
+  const content = `${JSON.stringify(data)}\n`;
   await fs.writeFile(filePath, content, "utf8");
 };
 

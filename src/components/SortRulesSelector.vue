@@ -50,7 +50,7 @@ const handleSelectRule = (property: SortProperty) => {
 
 <template>
   <div ref="containerRef" class="drop-button-container">
-    <button type="button" class="drop-button" @click.stop="toggleDropdown">
+    <button type="button" class="drop-button" @click="toggleDropdown">
       <template v-if="isDefaultSort">
         <img
           :src="arrowDownArrowUpIconUrl"
