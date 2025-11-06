@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
@@ -25,12 +25,14 @@ const handleSelect = (idx: number) => {
     selectedOpinions.value.splice(index, 1);
   }
 };
+const selectedRulesContainerRef = ref<HTMLElement | null>(null);
+let resizeObserver: ResizeObserver | null = null;
 </script>
 
 <template>
   <div class="rule-selector" ref="containerRef">
     <button type="button" class="rule-selector-button" @click="toggleDropdown">
-      <div class="selected-rules-container">
+      <div ref="selectedRulesContainerRef" class="selected-rules-container">
         <span
           v-for="idx in selectedOpinions"
           :key="idx"
@@ -71,6 +73,7 @@ const handleSelect = (idx: number) => {
   background: none;
   border: 1px solid #767676;
   border-radius: 2px;
+  overflow: hidden;
 }
 
 .selected-rules-container {
@@ -81,10 +84,7 @@ const handleSelect = (idx: number) => {
   gap: 4px;
   text-align: left;
   flex: 1 1 0;
-  width: auto;
-  min-width: 0;
   white-space: nowrap;
-  overflow: hidden;
 }
 
 .selected-rule-item {
