@@ -5,11 +5,11 @@ import SiteHeader from "@/components/SiteHeader.vue";
 
 <template>
   <div id="app">
-    <SiteHeader />
+    <site-header />
     <main>
       <router-view />
     </main>
-    <SiteFooter />
+    <site-footer />
   </div>
 </template>
 

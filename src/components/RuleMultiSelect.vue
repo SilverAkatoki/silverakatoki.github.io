@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
@@ -15,48 +15,75 @@ const opinions = ref([
   "规则 2",
   "规则 3"
 ]);
-const selectedOpinions = ref<number[]>([]);
+
+const selectedOpinionIndices = ref<number[]>([]);
+const showedSelectedOpinionIndices = ref<number[]>([]);
+
+const selectedRulesContainerRef = ref<HTMLElement | null>(null);
+const measurementSelectedRuleItem = ref<HTMLElement | null>(null);
 
 const handleSelect = (idx: number) => {
-  const index = selectedOpinions.value.indexOf(idx);
+  const index = selectedOpinionIndices.value.indexOf(idx);
   if (index === -1) {
-    selectedOpinions.value.push(idx);
+    selectedOpinionIndices.value.push(idx);
   } else {
-    selectedOpinions.value.splice(index, 1);
+    selectedOpinionIndices.value.splice(index, 1);
   }
 };
-const selectedRulesContainerRef = ref<HTMLElement | null>(null);
-let resizeObserver: ResizeObserver | null = null;
-const previousWidth = ref(0);
 
-const handleResize = (entry: ResizeObserverEntry) => {
-  const { width } = entry.contentRect;
-
-  if (width > previousWidth.value) {
-    console.log("aaa");
-  }
-
-  previousWidth.value = width;
-};
+const resizeObserver = ref<ResizeObserver | null>(null);
 
 onMounted(() => {
-  const el = selectedRulesContainerRef.value;
-  if (!el) return;
-
-  previousWidth.value = el.getBoundingClientRect().width;
-
-  resizeObserver = new ResizeObserver(entries => {
-    if (!entries.length) return;
-    handleResize(entries[0]);
-  });
-
-  resizeObserver.observe(el);
+  if (selectedRulesContainerRef.value) {
+    resizeObserver.value = new ResizeObserver(updateShowedOpinions);
+    resizeObserver.value.observe(selectedRulesContainerRef.value);
+  }
 });
 
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect();
-  resizeObserver = null;
+onUnmounted(() => {
+  if (resizeObserver.value) {
+    resizeObserver.value.disconnect();
+  }
 });
+
+
+
+// 简化的更新函数
+const updateShowedOpinions = async () => {
+  await nextTick();
+
+  const container = selectedRulesContainerRef.value;
+  if (!container) return;
+
+  const item = measurementSelectedRuleItem.value;
+  if (!item) return;
+
+  const containerWidth = container.clientWidth;
+  if (containerWidth === 0) {
+    // Container is collapsed (e.g. parent v-show="false"), skip update to keep last valid layout.
+    return;
+  }
+
+  const newShowedIndices = [];
+  let currentWidth = 0;
+
+  for (const index of selectedOpinionIndices.value) {
+    item.textContent = opinions.value[index];
+    const itemWidth = item.offsetWidth;
+    console.log(itemWidth);
+
+    if (currentWidth + itemWidth <= containerWidth) {
+      newShowedIndices.push(index);
+      currentWidth += itemWidth;
+    } else {
+      break;
+    }
+  }
+
+  showedSelectedOpinionIndices.value = newShowedIndices;
+};
+
+watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
 </script>
 
 <template>
@@ -64,10 +91,16 @@ onBeforeUnmount(() => {
     <button type="button" class="rule-selector-button" @click="toggleDropdown">
       <div ref="selectedRulesContainerRef" class="selected-rules-container">
         <span
-          v-for="idx in selectedOpinions"
-          :key="idx"
+          v-for="(item, index) in showedSelectedOpinionIndices"
+          :key="index"
           class="selected-rule-item"
-          >{{ opinions[idx] }}</span
+          >{{
+            showedSelectedOpinionIndices.length <
+              selectedOpinionIndices.length &&
+            index === showedSelectedOpinionIndices.length - 1
+              ? `+ ${selectedOpinionIndices.length - showedSelectedOpinionIndices.length + 1}`
+              : opinions[item]
+          }}</span
         >
       </div>
     </button>
@@ -79,9 +112,12 @@ onBeforeUnmount(() => {
         @click="handleSelect(index)"
       >
         <span>{{ option }}</span>
-        <span v-show="selectedOpinions.includes(index)">✓</span>
+        <span v-show="selectedOpinionIndices.includes(index)">✓</span>
       </div>
     </div>
+  </div>
+  <div :style="{ position: 'absolute', left: '-9999px' }">
+    <span ref="measurementSelectedRuleItem" class="selected-rule-item" />
   </div>
 </template>
 
