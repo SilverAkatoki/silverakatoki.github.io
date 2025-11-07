@@ -47,9 +47,6 @@ onUnmounted(() => {
   }
 });
 
-
-
-// 简化的更新函数
 const updateShowedOpinions = async () => {
   await nextTick();
 
@@ -60,10 +57,8 @@ const updateShowedOpinions = async () => {
   if (!item) return;
 
   const containerWidth = container.clientWidth;
-  if (containerWidth === 0) {
-    // Container is collapsed (e.g. parent v-show="false"), skip update to keep last valid layout.
-    return;
-  }
+  if (containerWidth === 0) return;
+  // 当下来菜单隐藏时，容器宽度为 0，跳过更新以保持上次有效布局。
 
   const newShowedIndices = [];
   let currentWidth = 0;
@@ -71,7 +66,6 @@ const updateShowedOpinions = async () => {
   for (const index of selectedOpinionIndices.value) {
     item.textContent = opinions.value[index];
     const itemWidth = item.offsetWidth;
-    console.log(itemWidth);
 
     if (currentWidth + itemWidth <= containerWidth) {
       newShowedIndices.push(index);
@@ -85,6 +79,16 @@ const updateShowedOpinions = async () => {
 };
 
 watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
+const getItemDisplay = (item: number, index: number) => {
+  if (
+    showedSelectedOpinionIndices.value.length <
+      selectedOpinionIndices.value.length &&
+    index === showedSelectedOpinionIndices.value.length - 1
+  ) {
+    return `+ ${selectedOpinionIndices.value.length - showedSelectedOpinionIndices.value.length + 1}`;
+  }
+  return opinions.value[item];
+};
 </script>
 
 <template>
@@ -94,14 +98,9 @@ watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
         <span
           v-for="(item, index) in showedSelectedOpinionIndices"
           :key="index"
-          class="selected-rule-item"
-          >{{
-            showedSelectedOpinionIndices.length <
-              selectedOpinionIndices.length &&
-            index === showedSelectedOpinionIndices.length - 1
-              ? `+ ${selectedOpinionIndices.length - showedSelectedOpinionIndices.length + 1}`
-              : opinions[item]
-          }}</span>
+          class="selected-rule-item">
+          {{ getItemDisplay(item, index) }}
+        </span>
       </div>
     </button>
     <div v-show="isOpen" class="dropdown-content">
@@ -109,8 +108,7 @@ watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
         v-for="(option, index) in opinions"
         :key="index"
         class="rule-item"
-        @click="handleSelect(index)"
-      >
+        @click="handleSelect(index)">
         <span>{{ option }}</span>
         <span v-show="selectedOpinionIndices.includes(index)">✓</span>
       </div>

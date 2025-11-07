@@ -222,7 +222,7 @@ export default [
           svg: "always",
           math: "always"
         }
-      ],
+      ]
 
       // 导入规则（Vue 文件简化版）
       "import/order": ["error", importOrderConfig],

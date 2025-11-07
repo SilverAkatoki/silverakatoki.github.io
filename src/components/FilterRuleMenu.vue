@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import filterIconUrl from "@/assets/icons/filter.svg";
 import RuleMultiSelect from "@/components/RuleMultiSelect.vue";
+import TagMultiSelect from "@/components/TagMultiSelect.vue";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
@@ -28,9 +29,9 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
               <option value="eq">等于</option>
               <option value="ne">不等于</option>
             </select>
-            <select class="rule">
-              <option value="fiction">小说</option>
-            </select>
+            <div class="rule">
+              <tag-multi-select />
+            </div>
             <button type="button" class="remove-rule-btn">—</button>
           </div>
           <div class="filter-rule-container">
