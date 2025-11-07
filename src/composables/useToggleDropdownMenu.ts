@@ -28,7 +28,7 @@ export const useToggleDropdownMenu = () => {
     containerRef,
     isOpen,
     toggleDropdown
-  }
-}
+  };
+};
 
 

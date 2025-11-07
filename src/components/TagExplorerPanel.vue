@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+
 import { tags } from "@/data/tags.json";
 const isExpanded = ref(false);
 </script>
@@ -8,7 +9,7 @@ const isExpanded = ref(false);
   <div class="artocle-tags-selector">
     <div class="header">
       <span class="title">总共有 {{ tags.length }} 个标签</span>
-      <button @click="isExpanded = !isExpanded" class="toggle-btn">
+      <button class="toggle-btn" @click="isExpanded = !isExpanded">
         {{ isExpanded ? "关闭" : "展开" }}
         <span :class="['arrow', isExpanded ? 'up' : 'down']"></span>
       </button>

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export const calcDaysDiff = (dateStr: string): number => {
   const targetDate = new Date(dateStr);
   const currentDate = new Date();

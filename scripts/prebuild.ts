@@ -105,7 +105,7 @@ const inferTitle = (candidate: unknown, body: string): string => {
 };
 
 /**
-* 格式化输出 JSON，2 空格缩进
+* 格式化输出 JSON
 */
 const writeJson = async (filePath: string, data: unknown): Promise<void> => {
   const content = `${JSON.stringify(data)}\n`;
@@ -158,6 +158,7 @@ const main = async (): Promise<void> => {
         if (!tagMap.has(tag)) {
           tagMap.set(tag, 1);
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           tagMap.set(tag, tagMap.get(tag)! + 1);
         }
       });

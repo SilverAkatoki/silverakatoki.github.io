@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 import filterIconUrl from "@/assets/icons/filter.svg";
 import RuleMultiSelect from "@/components/RuleMultiSelect.vue";
+import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 </script>
@@ -11,7 +11,7 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
     <button type="button" class="drop-button" @click="toggleDropdown">
       <img :src="filterIconUrl" class="button-icon" alt="" aria-hidden="true" />
     </button>
-    <div class="dropdown-content" v-show="isOpen">
+    <div v-show="isOpen" class="dropdown-content">
       <div class="filter-content">
         <div class="filter-term">
           匹配
@@ -104,7 +104,7 @@ select {
   left: 0;
   /* 必须定死宽度，内层全是百分比 */
   /* 涉及到里面tag超出不显示的逻辑 */
-  width: 1300%;   
+  width: 1300%;
   background-color: white;
   border: 1px solid silver;
   border-radius: 3px;

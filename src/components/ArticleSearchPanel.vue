@@ -2,11 +2,12 @@
 import { ref, watch } from "vue";
 
 import { debounce } from "ts-debounce";
-import SortRuleMenu from "@/components/SortRuleMenu.vue";
-import FilterRuleMenu from "@/components/FilterRuleMenu.vue";
-import searchIconUrl from "@/assets/icons/search.svg";
 
+import searchIconUrl from "@/assets/icons/search.svg";
+import FilterRuleMenu from "@/components/FilterRuleMenu.vue";
+import SortRuleMenu from "@/components/SortRuleMenu.vue";
 import { DEFAULT_SORT_STATE } from "@/types/sortRuleSelector";
+
 import type { SortState } from "@/types/sortRuleSelector";
 
 const title = ref("");

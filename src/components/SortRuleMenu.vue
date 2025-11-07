@@ -1,16 +1,18 @@
 ﻿<script setup lang="ts">
-import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 import { computed, ref, watch } from "vue";
+
+import arrowDownArrowUpIconUrl from "@/assets/icons/arrow-down-arrow-up.svg";
+import arrowDownShortWideIconUrl from "@/assets/icons/arrow-down-short-wide.svg";
+import arrowDownWideShortIconUrl from "@/assets/icons/arrow-down-wide-short.svg";
+import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
+import { SortKeys, DEFAULT_SORT_DIRECTION } from "@/types/sortRuleSelector";
+
 import type {
   SortDirection,
   SortProperty,
   SortRule,
   SortState
 } from "@/types/sortRuleSelector";
-import { SortKeys, DEFAULT_SORT_DIRECTION } from "@/types/sortRuleSelector";
-import arrowDownArrowUpIconUrl from "@/assets/icons/arrow-down-arrow-up.svg";
-import arrowDownShortWideIconUrl from "@/assets/icons/arrow-down-short-wide.svg";
-import arrowDownWideShortIconUrl from "@/assets/icons/arrow-down-wide-short.svg";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
@@ -73,7 +75,7 @@ const handleSelectRule = (property: SortProperty) => {
         <span class="button-label">{{ selectedRule.label }}</span>
       </template>
     </button>
-    <div class="dropdown-content" v-show="isOpen">
+    <div v-show="isOpen" class="dropdown-content">
       <div
         v-for="rule in sortRules"
         :key="rule.key"

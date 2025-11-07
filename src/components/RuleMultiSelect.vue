@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
@@ -87,7 +88,7 @@ watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
 </script>
 
 <template>
-  <div class="rule-selector" ref="containerRef">
+  <div ref="containerRef" class="rule-selector">
     <button type="button" class="rule-selector-button" @click="toggleDropdown">
       <div ref="selectedRulesContainerRef" class="selected-rules-container">
         <span
@@ -100,11 +101,10 @@ watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
             index === showedSelectedOpinionIndices.length - 1
               ? `+ ${selectedOpinionIndices.length - showedSelectedOpinionIndices.length + 1}`
               : opinions[item]
-          }}</span
-        >
+          }}</span>
       </div>
     </button>
-    <div class="dropdown-content" v-show="isOpen">
+    <div v-show="isOpen" class="dropdown-content">
       <div
         v-for="(option, index) in opinions"
         :key="index"
@@ -117,7 +117,7 @@ watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
     </div>
   </div>
   <div :style="{ position: 'absolute', left: '-9999px' }">
-    <span ref="measurementSelectedRuleItem" class="selected-rule-item" />
+    <span ref="measurementSelectedRuleItem" class="selected-rule-item"></span>
   </div>
 </template>
 

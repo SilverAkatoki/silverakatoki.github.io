@@ -22,8 +22,8 @@ const browserGlobals = {
   Response: "readonly",
   MouseEvent: "readonly",
   Event: "readonly",
-  CustomEvent: "readonly"
-  clearTimeout: "readonly",
+  CustomEvent: "readonly",
+  ResizeObserver: "readonly"
 };
 
 // 公共导入顺序配置
