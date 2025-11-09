@@ -13,6 +13,9 @@ const props = defineProps<{
 const selectedOperator = ref<FilterRuleOperator>(props.rule.operator);
 const selectedItems = ref<string[]>([...props.rule.values]);
 
+const arraysAreEqual = (a: string[], b: string[]): boolean =>
+  a.length === b.length && a.every((value, index) => value === b[index]);
+
 const emit = defineEmits<{
   change: [rule: FilterRule];
   remove: [ruleId: string];
@@ -33,10 +36,18 @@ watch(
 );
 
 watch([selectedOperator, selectedItems], () => {
+  const normalizedValues = [...selectedItems.value];
+  const hasOperatorChanged = selectedOperator.value !== props.rule.operator;
+  const hasValuesChanged = !arraysAreEqual(normalizedValues, props.rule.values);
+
+  if (!hasOperatorChanged && !hasValuesChanged) {
+    return;
+  }
+
   emit("change", {
     ...props.rule,
     operator: selectedOperator.value,
-    values: [...selectedItems.value]
+    values: normalizedValues
   });
 });
 
@@ -60,7 +71,10 @@ const handleSelectedItems = (value: string[]) => {
         @selected="handleSelectedItems"
       />
     </div>
-    <button type="button" class="remove-rule-btn" @click="emit('remove', rule.id)">—</button>
+    <button
+      type="button"
+      class="remove-rule-btn"
+      @click.stop="emit('remove', rule.id)">—</button>
   </div>
 </template>
 

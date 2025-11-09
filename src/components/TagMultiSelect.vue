@@ -7,7 +7,6 @@ import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 const props = defineProps<{
   options: string[];
   modelValue?: string[];
-  placeholder?: string;
 }>();
 
 const emit = defineEmits<{
@@ -18,10 +17,11 @@ const emit = defineEmits<{
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
 const tagSearchText = ref("");
-const selectedTags = ref<string[]>(props.modelValue ? [...props.modelValue] : []);
+const selectedTags = ref<string[]>(
+  props.modelValue ? [...props.modelValue] : []
+);
 const visibleSelectedTagIndices = ref<number[]>([]);
 
-const placeholderText = computed(() => props.placeholder ?? "请选择标签");
 const tagOptions = computed(() => props.options ?? []);
 const selectedTagSet = computed(() => new Set(selectedTags.value));
 
@@ -92,7 +92,7 @@ const updateVisibleSelections = async () => {
 
   const containerWidth = container.clientWidth;
   if (containerWidth === 0) return;
-  // Dropdown is hidden when closed which temporarily reports width=0.
+  // 当下拉菜单关闭时，不要重置宽度，否则会让标签省略失效
 
   const newVisibleIndices: number[] = [];
   let currentWidth = 0;
@@ -172,9 +172,6 @@ const isTagSelected = (tag: string) => selectedTagSet.value.has(tag);
             {{ getItemDisplay(item, index) }}
           </span>
         </template>
-        <span v-else class="selected-rule-placeholder">
-          {{ placeholderText }}
-        </span>
       </div>
     </button>
     <div v-show="isOpen" class="dropdown-content">
@@ -185,11 +182,7 @@ const isTagSelected = (tag: string) => selectedTagSet.value.has(tag);
             :src="searchIconUrl"
             alt=""
             aria-hidden="true" />
-          <input
-            v-model="tagSearchText"
-            class="search-input"
-            type="search"
-            placeholder="搜索" />
+          <input v-model="tagSearchText" class="search-input" type="search" />
         </div>
       </div>
       <div class="tags-container">
@@ -291,11 +284,6 @@ const isTagSelected = (tag: string) => selectedTagSet.value.has(tag);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.selected-rule-placeholder {
-  font-size: 12px;
-  color: #8c8c8c;
 }
 
 .dropdown-content {

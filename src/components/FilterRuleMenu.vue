@@ -24,6 +24,7 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
 const matchMode = ref<FilterMatchMode>(createDefaultFilterState().matchMode);
 const rules = ref<FilterRule[]>([]);
+const allRuleTypes = Object.values(FilterRuleTypes) as FilterRuleType[];
 
 const emit = defineEmits<{
   (event: "filter-state", payload: FilterState): void;
@@ -62,6 +63,9 @@ const createRule = (type: FilterRuleType): FilterRule => ({
 });
 
 const handleAddRule = (type: FilterRuleType) => {
+  if (!availableRuleTypes.value.includes(type)) {
+    return;
+  }
   rules.value = [...rules.value, createRule(type)];
 };
 
@@ -82,6 +86,11 @@ const handleReset = () => {
   matchMode.value = defaultState.matchMode;
   rules.value = [];
 };
+
+const availableRuleTypes = computed<FilterRuleType[]>(() => {
+  const usedTypes = new Set(rules.value.map(rule => rule.type));
+  return allRuleTypes.filter(type => !usedTypes.has(type));
+});
 
 watch(
   [matchMode, rules],
@@ -134,7 +143,10 @@ watch(
           </template>
           <p v-else class="filter-empty">暂未添加过滤条件</p>
           <div>
-            <add-filter-button @select="handleAddRule" />
+            <add-filter-button
+              :available-types="availableRuleTypes"
+              @select="handleAddRule"
+            />
           </div>
         </div>
 

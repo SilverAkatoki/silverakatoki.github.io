@@ -6,10 +6,7 @@ import { debounce } from "ts-debounce";
 import searchIconUrl from "@/assets/icons/search.svg";
 import FilterRuleMenu from "@/components/FilterRuleMenu.vue";
 import SortRuleMenu from "@/components/SortRuleMenu.vue";
-import {
-  DEFAULT_SORT_STATE,
-  type SortState
-} from "@/types/sortRuleSelector";
+import { DEFAULT_SORT_STATE, type SortState } from "@/types/sortRuleSelector";
 import {
   cloneFilterState,
   createDefaultFilterState,
@@ -61,14 +58,8 @@ const handleFilterStateChange = (state: FilterState) => {
             class="search-icon"
             :src="searchIconUrl"
             alt=""
-            aria-hidden="true"
-          />
-          <input
-            v-model="title"
-            class="search-input"
-            type="search"
-            placeholder="搜索文章标题"
-          />
+            aria-hidden="true" />
+          <input v-model="title" class="search-input" type="search" />
         </div>
       </div>
       <div class="rules-selector-container">

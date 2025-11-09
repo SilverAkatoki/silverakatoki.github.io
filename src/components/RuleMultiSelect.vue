@@ -6,7 +6,6 @@ import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 const props = defineProps<{
   options: string[];
   modelValue?: string[];
-  placeholder?: string;
 }>();
 
 const emit = defineEmits<{
@@ -25,7 +24,6 @@ const selectedRulesContainerRef = ref<HTMLElement | null>(null);
 const measurementSelectedRuleItem = ref<HTMLElement | null>(null);
 const resizeObserver = ref<ResizeObserver | null>(null);
 
-const placeholderText = computed(() => props.placeholder ?? "请选择");
 const optionList = computed(() => props.options);
 const selectedValueSet = computed(() => new Set(selectedValues.value));
 
@@ -71,7 +69,7 @@ const updateVisibleSelections = async () => {
 
   const containerWidth = container.clientWidth;
   if (containerWidth === 0) return;
-  // Dropdown is hidden while closed, which temporarily reports width=0.
+  // 当下拉菜单关闭时，不要重置宽度，否则会让标签省略失效
 
   const newVisibleIndices: number[] = [];
   let currentWidth = 0;
@@ -143,9 +141,6 @@ const isOptionSelected = (option: string) =>
             {{ getItemDisplay(selectedIndex, index) }}
           </span>
         </template>
-        <span v-else class="selected-rule-placeholder">
-          {{ placeholderText }}
-        </span>
       </div>
     </button>
     <div v-show="isOpen" class="dropdown-content">
@@ -209,11 +204,6 @@ const isOptionSelected = (option: string) =>
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.selected-rule-placeholder {
-  font-size: 12px;
-  color: #8c8c8c;
 }
 
 .dropdown-content {

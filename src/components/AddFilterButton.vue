@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { computed, watch } from "vue";
+
 import categoryIconUrl from "@/assets/icons/category.svg";
 import tagIconUrl from "@/assets/icons/tag.svg";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 import { FilterRuleTypes, type FilterRuleType } from "@/types/filterRule";
+
+const props = defineProps<{
+  availableTypes?: FilterRuleType[];
+}>();
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
@@ -19,7 +25,33 @@ const ruleOptions: Array<{
   { type: FilterRuleTypes.CATEGORY, label: "类别", icon: categoryIconUrl }
 ];
 
-const handleSelected = (ruleType: FilterRuleType) => {
+const filteredRuleOptions = computed(() => {
+  if (!props.availableTypes) {
+    return ruleOptions;
+  }
+  const allowList = new Set(props.availableTypes);
+  return ruleOptions.filter(option => allowList.has(option.type));
+});
+
+const isDisabled = computed(() => filteredRuleOptions.value.length === 0);
+
+watch(
+  filteredRuleOptions,
+  options => {
+    if (options.length === 0 && isOpen.value) {
+      toggleDropdown();
+    }
+  },
+  { deep: true }
+);
+
+const handleToggle = () => {
+  if (isDisabled.value) return;
+  toggleDropdown();
+};
+
+const handleSelected = (ruleType: FilterRuleType, event?: MouseEvent) => {
+  event?.stopPropagation();
   toggleDropdown();
   emit("select", ruleType);
 };
@@ -27,13 +59,19 @@ const handleSelected = (ruleType: FilterRuleType) => {
 
 <template>
   <div ref="containerRef" class="drop-button-container">
-    <button type="button" @click="toggleDropdown" class="add-rule-button">+</button>
+    <button
+      type="button"
+      class="add-rule-button"
+      :disabled="isDisabled"
+      @click="handleToggle">
+      +
+    </button>
     <div v-show="isOpen" class="dropdown-content">
       <span
-        v-for="rule in ruleOptions"
-        :key="rule.type"
+        v-for="rule in filteredRuleOptions"
+        :key="`rule-${rule.type}`"
         class="dropdown-item"
-        @click="handleSelected(rule.type)"
+        @click="handleSelected(rule.type, $event)"
       >
         <img class="icon" :src="rule.icon" alt="" />
         {{ rule.label }}
@@ -66,6 +104,10 @@ const handleSelected = (ruleType: FilterRuleType) => {
 .add-rule-button {
   width: 1.1rem;
   height: 1.1rem;
+}
+
+.add-rule-button:disabled {
+  opacity: 0.5;
 }
 
 .drop-button-container {
