@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import filterIconUrl from "@/assets/icons/filter.svg";
-import RuleMultiSelect from "@/components/RuleMultiSelect.vue";
-import TagMultiSelect from "@/components/TagMultiSelect.vue";
+import FilterCategoryRuleItem from "./FilterCategoryRuleItem.vue";
+import FilterTagRuleItem from "./FilterTagRuleItem.vue";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
+import AddFilterButton from "./AddFilterButton.vue";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 </script>
@@ -23,32 +24,15 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
           过滤条件：
         </div>
         <div class="filter-rules">
-          <div class="filter-rule-container">
-            <span class="description">类别</span>
-            <select class="rule-term">
-              <option value="eq">等于</option>
-              <option value="ne">不等于</option>
-            </select>
-            <div class="rule">
-              <tag-multi-select />
-            </div>
-            <button type="button" class="remove-rule-btn">—</button>
+          <filter-tag-rule-item />
+          <filter-category-rule-item />
+          <div>
+            <add-filter-button />
           </div>
-          <div class="filter-rule-container">
-            <span class="description">类别</span>
-            <select class="rule-term">
-              <option value="eq">等于</option>
-              <option value="ne">不等于</option>
-            </select>
-            <div class="rule">
-              <rule-multi-select />
-            </div>
-            <button type="button" class="remove-rule-btn">—</button>
-          </div>
-          <button type="button" class="add-rule-btn">+</button>
         </div>
+
         <div class="filter-bottom">
-          <button type="button">重置</button>
+          <button type="button" class="reset-button">重置</button>
         </div>
       </div>
     </div>
@@ -56,8 +40,8 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 </template>
 
 <style scoped lang="css">
-rule-multi-select {
-  height: 100%;
+.reset-button {
+  width: 100%;
 }
 
 select {

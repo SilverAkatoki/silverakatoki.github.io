@@ -79,6 +79,7 @@ const updateShowedOpinions = async () => {
 };
 
 watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
+
 const getItemDisplay = (item: number, index: number) => {
   if (
     showedSelectedOpinionIndices.value.length <

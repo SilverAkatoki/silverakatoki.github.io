@@ -14,7 +14,7 @@ interface ArticleMetadata {
   title: string;
   createdDate: string;
   updatedDate: string;
-  category: string;
+  categories: string[];
   tags: string[];
 };
 
@@ -52,8 +52,8 @@ const toDateString = (value: unknown): string => {
   return normalized;
 };
 
-const collectTags = (...fields: unknown[]): string[] => {
-  const tags = new Set<string>();
+const collectElement = (...fields: unknown[]): string[] => {
+  const elements = new Set<string>();
 
   // 递归把标签抽出来
   const visit = (value: unknown): void => {
@@ -71,11 +71,11 @@ const collectTags = (...fields: unknown[]): string[] => {
       .split(/[,，]/)
       .map(token => token.trim())
       .filter(Boolean)
-      .forEach(token => tags.add(token));
+      .forEach(token => elements.add(token));
   };
 
   fields.forEach(visit);
-  return [...tags];
+  return [...elements];
 };
 
 const inferTitle = (candidate: unknown, body: string): string => {
@@ -151,8 +151,8 @@ const main = async (): Promise<void> => {
       const title = inferTitle(parsed.title, body);
       const createdDate = getCreateDateString(parsed.createdDate);
       const updatedDate = parsed.updatedDate !== undefined ? toDateString(parsed.updatedDate) : createdDate;
-      const tags = collectTags(parsed.tags, parsed.tag);
-      const category = parsed.category || "";
+      const tags = collectElement(parsed.tags);
+      const categories = collectElement(parsed.category);
 
       tags.forEach(tag => {
         if (!tagMap.has(tag)) {
@@ -165,7 +165,7 @@ const main = async (): Promise<void> => {
 
       await fs.writeFile(targetPath, `${body.trimEnd()}\n`, "utf8");
 
-      articles.push({ uuid, title, createdDate, updatedDate, category, tags });
+      articles.push({ uuid, title, createdDate, updatedDate, categories: categories, tags });
     } catch (err: unknown) {
       log(`${err}`);
       log("已跳过该文章");

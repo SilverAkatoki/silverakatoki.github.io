@@ -141,7 +141,7 @@ watch(
                 {{ meta.createdDate }}
               </dd>
             </div>
-             <div class="article-meta-item">
+            <div class="article-meta-item">
               <dt class="article-meta-term">最近更新日期</dt>
               <dd class="article-meta-detail article-meta-date">
                 {{ meta.updatedDate }}
@@ -153,7 +153,17 @@ watch(
                 <span v-for="tag in meta.tags" :key="tag" class="article-tag">
                   {{ tag }}
                 </span>
-                <span v-if="meta.tags.length === 0" class="article-meta-empty">暂无标签</span>
+                <span v-if="meta.tags.length === 0" class="article-meta-empty">
+                  暂无标签
+                </span>
+              </dd>
+            </div>
+            <div class="article-meta-item" v-if="meta.categories.length !== 0">
+              <dt class="article-meta-term">类别</dt>
+              <dd class="article-meta-detail">
+                <span v-for="category in meta.categories" :key="category" class="article-tag">
+                  {{ category }}
+                </span>
               </dd>
             </div>
           </dl>
@@ -161,8 +171,7 @@ watch(
         <section
           ref="articleContentRef"
           class="article-content"
-          v-html="sanitizedHtml"
-        ></section>
+          v-html="sanitizedHtml"></section>
       </article>
     </template>
   </main>

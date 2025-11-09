@@ -4,6 +4,7 @@ export interface ArticleMetadata {
   createdDate: string;
   updatedDate: string;
   tags: string[];
+  categories: string[];
 };
 
 export interface Article {
