@@ -1,22 +1,76 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
+
 import TagMultiSelect from "@/components/TagMultiSelect.vue";
+import tagIconUrl from "@/assets/icons/tag.svg";
+import type { FilterRule, FilterRuleOperator } from "@/types/filterRule";
+
+const props = defineProps<{
+  tags: string[];
+  rule: FilterRule;
+}>();
+
+const selectedOperator = ref<FilterRuleOperator>(props.rule.operator);
+const selectedItems = ref<string[]>([...props.rule.values]);
+
+const emit = defineEmits<{
+  change: [rule: FilterRule];
+  remove: [ruleId: string];
+}>();
+
+watch(
+  () => props.rule.operator,
+  operator => {
+    selectedOperator.value = operator;
+  }
+);
+watch(
+  () => props.rule.values,
+  values => {
+    selectedItems.value = [...values];
+  },
+  { deep: true }
+);
+
+watch([selectedOperator, selectedItems], () => {
+  emit("change", {
+    ...props.rule,
+    operator: selectedOperator.value,
+    values: [...selectedItems.value]
+  });
+});
+
+const handleSelectedItems = (value: string[]) => {
+  selectedItems.value = value;
+};
 </script>
 
 <template>
   <div class="filter-rule-container">
+    <img :src="tagIconUrl" class="icon" alt="" />
     <span class="description">标签</span>
-    <select class="rule-term">
+    <select class="rule-term" v-model="selectedOperator">
       <option value="eq">等于</option>
       <option value="ne">不等于</option>
     </select>
     <div class="rule">
-      <tag-multi-select />
+      <tag-multi-select
+        :options="tags"
+        :model-value="selectedItems"
+        @selected="handleSelectedItems"
+      />
     </div>
-    <button type="button" class="remove-rule-btn">—</button>
+    <button type="button" class="remove-rule-btn" @click="emit('remove', rule.id)">—</button>
   </div>
 </template>
 
 <style lang="css" scoped>
+.icon {
+  width: 1.1rem;
+  pointer-events: none;
+  display: block;
+}
+
 .filter-rule-container {
   line-height: 24px;
   --filter-rule-row-height: 1lh;

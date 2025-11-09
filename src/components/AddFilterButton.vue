@@ -1,24 +1,42 @@
 <script setup lang="ts">
-import tagIconUrl from "@/assets/icons/tag.svg"
+import categoryIconUrl from "@/assets/icons/category.svg";
+import tagIconUrl from "@/assets/icons/tag.svg";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
+import { FilterRuleTypes, type FilterRuleType } from "@/types/filterRule";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
-const handleSelected = (ruleType: string) => {
+const emit = defineEmits<{
+  select: [ruleType: FilterRuleType];
+}>();
+
+const ruleOptions: Array<{
+  type: FilterRuleType;
+  label: string;
+  icon: string;
+}> = [
+  { type: FilterRuleTypes.TAG, label: "标签", icon: tagIconUrl },
+  { type: FilterRuleTypes.CATEGORY, label: "类别", icon: categoryIconUrl }
+];
+
+const handleSelected = (ruleType: FilterRuleType) => {
   toggleDropdown();
-  console.log(ruleType);
+  emit("select", ruleType);
 };
 </script>
 
 <template>
   <div ref="containerRef" class="drop-button-container">
-    <button type="button" @click="toggleDropdown" class="add-rule-button">
-      +
-    </button>
+    <button type="button" @click="toggleDropdown" class="add-rule-button">+</button>
     <div v-show="isOpen" class="dropdown-content">
-      <span class="dropdown-item" @click="handleSelected('tag')">
-        <img class="icon" :src="tagIconUrl"/>
-        标签
+      <span
+        v-for="rule in ruleOptions"
+        :key="rule.type"
+        class="dropdown-item"
+        @click="handleSelected(rule.type)"
+      >
+        <img class="icon" :src="rule.icon" alt="" />
+        {{ rule.label }}
       </span>
     </div>
   </div>

@@ -1,11 +1,101 @@
 <script setup lang="ts">
-import filterIconUrl from "@/assets/icons/filter.svg";
+import { computed, ref, watch } from "vue";
+
+import AddFilterButton from "./AddFilterButton.vue";
 import FilterCategoryRuleItem from "./FilterCategoryRuleItem.vue";
 import FilterTagRuleItem from "./FilterTagRuleItem.vue";
+import filterIconUrl from "@/assets/icons/filter.svg";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
-import AddFilterButton from "./AddFilterButton.vue";
+import { articles } from "@/data/articles-index.json";
+import type { ArticleMetadata } from "@/types/article";
+import {
+  FilterRuleTypes,
+  cloneFilterState,
+  createDefaultFilterState
+} from "@/types/filterRule";
+import type {
+  FilterMatchMode,
+  FilterRule,
+  FilterRuleType,
+  FilterState
+} from "@/types/filterRule";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
+
+const matchMode = ref<FilterMatchMode>(createDefaultFilterState().matchMode);
+const rules = ref<FilterRule[]>([]);
+
+const emit = defineEmits<{
+  (event: "filter-state", payload: FilterState): void;
+}>();
+
+const articleList = articles as ArticleMetadata[];
+
+const tagOptions = computed(() => {
+  const optionSet = new Set<string>();
+  for (const article of articleList) {
+    for (const tag of article.tags ?? []) {
+      optionSet.add(tag);
+    }
+  }
+  return Array.from(optionSet).sort((a, b) => a.localeCompare(b));
+});
+
+const categoryOptions = computed(() => {
+  const optionSet = new Set<string>();
+  for (const article of articleList) {
+    for (const category of article.categories ?? []) {
+      optionSet.add(category);
+    }
+  }
+  return Array.from(optionSet).sort((a, b) => a.localeCompare(b));
+});
+
+const createRule = (type: FilterRuleType): FilterRule => ({
+  id:
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${type}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  type,
+  operator: "eq",
+  values: []
+});
+
+const handleAddRule = (type: FilterRuleType) => {
+  rules.value = [...rules.value, createRule(type)];
+};
+
+const handleRuleChange = (updatedRule: FilterRule) => {
+  rules.value = rules.value.map(rule =>
+    rule.id === updatedRule.id
+      ? { ...updatedRule, values: [...updatedRule.values] }
+      : rule
+  );
+};
+
+const handleRemoveRule = (ruleId: string) => {
+  rules.value = rules.value.filter(rule => rule.id !== ruleId);
+};
+
+const handleReset = () => {
+  const defaultState = createDefaultFilterState();
+  matchMode.value = defaultState.matchMode;
+  rules.value = [];
+};
+
+watch(
+  [matchMode, rules],
+  () => {
+    emit(
+      "filter-state",
+      cloneFilterState({
+        matchMode: matchMode.value,
+        rules: rules.value
+      })
+    );
+  },
+  { deep: true, immediate: true }
+);
 </script>
 
 <template>
@@ -17,22 +107,41 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
       <div class="filter-content">
         <div class="filter-term">
           匹配
-          <select>
+          <select v-model="matchMode">
             <option value="all">所有</option>
             <option value="some">任一</option>
           </select>
           过滤条件：
         </div>
         <div class="filter-rules">
-          <filter-tag-rule-item />
-          <filter-category-rule-item />
+          <template v-if="rules.length > 0">
+            <template v-for="rule in rules" :key="rule.id">
+              <filter-tag-rule-item
+                v-if="rule.type === FilterRuleTypes.TAG"
+                :rule="rule"
+                :tags="tagOptions"
+                @change="handleRuleChange"
+                @remove="handleRemoveRule"
+              />
+              <filter-category-rule-item
+                v-else-if="rule.type === FilterRuleTypes.CATEGORY"
+                :rule="rule"
+                :categories="categoryOptions"
+                @change="handleRuleChange"
+                @remove="handleRemoveRule"
+              />
+            </template>
+          </template>
+          <p v-else class="filter-empty">暂未添加过滤条件</p>
           <div>
-            <add-filter-button />
+            <add-filter-button @select="handleAddRule" />
           </div>
         </div>
 
         <div class="filter-bottom">
-          <button type="button" class="reset-button">重置</button>
+          <button type="button" class="reset-button" @click="handleReset">
+            重置
+          </button>
         </div>
       </div>
     </div>
@@ -112,6 +221,12 @@ select {
 .filter-rules {
   display: flex;
   flex-direction: column;
+}
+
+.filter-empty {
+  font-size: 0.85rem;
+  color: #737373;
+  margin-bottom: 0.5rem;
 }
 
 .filter-rule-container {

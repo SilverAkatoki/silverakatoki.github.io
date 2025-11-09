@@ -1,53 +1,66 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 
+const props = defineProps<{
+  options: string[];
+  modelValue?: string[];
+  placeholder?: string;
+}>();
+
+const emit = defineEmits<{
+  (event: "selected", payload: string[]): void;
+  (event: "update:modelValue", payload: string[]): void;
+}>();
+
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
-const opinions = ref([
-  "规则 1",
-  "规则 2",
-  "规则 3",
-  "规则 1",
-  "规则 2",
-  "规则 3",
-  "规则 1",
-  "规则 2",
-  "规则 3"
-]);
-
-const selectedOpinionIndices = ref<number[]>([]);
-const showedSelectedOpinionIndices = ref<number[]>([]);
+const selectedValues = ref<string[]>(
+  props.modelValue ? [...props.modelValue] : []
+);
+const visibleSelectionIndices = ref<number[]>([]);
 
 const selectedRulesContainerRef = ref<HTMLElement | null>(null);
 const measurementSelectedRuleItem = ref<HTMLElement | null>(null);
-
-const handleSelect = (idx: number) => {
-  const index = selectedOpinionIndices.value.indexOf(idx);
-  if (index === -1) {
-    selectedOpinionIndices.value.push(idx);
-  } else {
-    selectedOpinionIndices.value.splice(index, 1);
-  }
-};
-
 const resizeObserver = ref<ResizeObserver | null>(null);
 
-onMounted(() => {
-  if (selectedRulesContainerRef.value) {
-    resizeObserver.value = new ResizeObserver(updateShowedOpinions);
-    resizeObserver.value.observe(selectedRulesContainerRef.value);
-  }
-});
+const placeholderText = computed(() => props.placeholder ?? "请选择");
+const optionList = computed(() => props.options);
+const selectedValueSet = computed(() => new Set(selectedValues.value));
 
-onUnmounted(() => {
-  if (resizeObserver.value) {
-    resizeObserver.value.disconnect();
-  }
-});
+const arraysAreEqual = (a: string[], b: string[]): boolean =>
+  a.length === b.length && a.every((value, index) => value === b[index]);
 
-const updateShowedOpinions = async () => {
+watch(
+  () => props.modelValue,
+  newValue => {
+    const normalized = Array.isArray(newValue) ? [...newValue] : [];
+    if (!arraysAreEqual(normalized, selectedValues.value)) {
+      selectedValues.value = normalized;
+    }
+  },
+  { deep: true }
+);
+
+const emitSelection = (values: string[]) => {
+  emit("selected", values);
+  emit("update:modelValue", values);
+};
+
+const handleSelect = (option: string) => {
+  const next = [...selectedValues.value];
+  const existingIndex = next.indexOf(option);
+  if (existingIndex === -1) {
+    next.push(option);
+  } else {
+    next.splice(existingIndex, 1);
+  }
+  selectedValues.value = next;
+  emitSelection(next);
+};
+
+const updateVisibleSelections = async () => {
   await nextTick();
 
   const container = selectedRulesContainerRef.value;
@@ -58,60 +71,91 @@ const updateShowedOpinions = async () => {
 
   const containerWidth = container.clientWidth;
   if (containerWidth === 0) return;
-  // 当下来菜单隐藏时，容器宽度为 0，跳过更新以保持上次有效布局。
+  // Dropdown is hidden while closed, which temporarily reports width=0.
 
-  const newShowedIndices = [];
+  const newVisibleIndices: number[] = [];
   let currentWidth = 0;
 
-  for (const index of selectedOpinionIndices.value) {
-    item.textContent = opinions.value[index];
+  selectedValues.value.forEach((value, index) => {
+    item.textContent = value;
     const itemWidth = item.offsetWidth;
 
     if (currentWidth + itemWidth <= containerWidth) {
-      newShowedIndices.push(index);
+      newVisibleIndices.push(index);
       currentWidth += itemWidth;
-    } else {
-      break;
     }
-  }
+  });
 
-  showedSelectedOpinionIndices.value = newShowedIndices;
+  visibleSelectionIndices.value = newVisibleIndices;
 };
 
-watch(selectedOpinionIndices, updateShowedOpinions, { deep: true });
+watch(
+  selectedValues,
+  () => {
+    void updateVisibleSelections();
+  },
+  { deep: true }
+);
 
-const getItemDisplay = (item: number, index: number) => {
+onMounted(() => {
+  if (selectedRulesContainerRef.value) {
+    resizeObserver.value = new ResizeObserver(() => {
+      void updateVisibleSelections();
+    });
+    resizeObserver.value.observe(selectedRulesContainerRef.value);
+  }
+  void updateVisibleSelections();
+});
+
+onUnmounted(() => {
+  if (resizeObserver.value) {
+    resizeObserver.value.disconnect();
+  }
+});
+
+const getItemDisplay = (selectedIndex: number, loopIndex: number) => {
+  const visibleCount = visibleSelectionIndices.value.length;
+  const totalCount = selectedValues.value.length;
+
   if (
-    showedSelectedOpinionIndices.value.length <
-      selectedOpinionIndices.value.length &&
-    index === showedSelectedOpinionIndices.value.length - 1
+    visibleCount > 0 &&
+    visibleCount < totalCount &&
+    loopIndex === visibleCount - 1
   ) {
-    return `+ ${selectedOpinionIndices.value.length - showedSelectedOpinionIndices.value.length + 1}`;
+    return `+ ${totalCount - visibleCount + 1}`;
   }
-  return opinions.value[item];
+  return selectedValues.value[selectedIndex];
 };
+
+const isOptionSelected = (option: string) =>
+  selectedValueSet.value.has(option);
 </script>
 
 <template>
   <div ref="containerRef" class="rule-selector">
     <button type="button" class="rule-selector-button" @click="toggleDropdown">
       <div ref="selectedRulesContainerRef" class="selected-rules-container">
-        <span
-          v-for="(item, index) in showedSelectedOpinionIndices"
-          :key="index"
-          class="selected-rule-item">
-          {{ getItemDisplay(item, index) }}
+        <template v-if="selectedValues.length > 0">
+          <span
+            v-for="(selectedIndex, index) in visibleSelectionIndices"
+            :key="`${selectedIndex}-${selectedValues[selectedIndex]}`"
+            class="selected-rule-item">
+            {{ getItemDisplay(selectedIndex, index) }}
+          </span>
+        </template>
+        <span v-else class="selected-rule-placeholder">
+          {{ placeholderText }}
         </span>
       </div>
     </button>
     <div v-show="isOpen" class="dropdown-content">
       <div
-        v-for="(option, index) in opinions"
-        :key="index"
+        v-for="(option, index) in optionList"
+        :key="`${option}-${index}`"
         class="rule-item"
-        @click="handleSelect(index)">
+        @click="handleSelect(option)">
         <span>{{ option }}</span>
-        <span v-show="selectedOpinionIndices.includes(index)">✓</span>
+        <span v-show="isOptionSelected(option)">✓</span>
       </div>
     </div>
   </div>
@@ -167,6 +211,11 @@ const getItemDisplay = (item: number, index: number) => {
   white-space: nowrap;
 }
 
+.selected-rule-placeholder {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
 .dropdown-content {
   position: absolute;
   top: calc(100% + 4px);
@@ -208,3 +257,4 @@ const getItemDisplay = (item: number, index: number) => {
   background-color: #eee;
 }
 </style>
+

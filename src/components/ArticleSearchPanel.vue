@@ -6,26 +6,49 @@ import { debounce } from "ts-debounce";
 import searchIconUrl from "@/assets/icons/search.svg";
 import FilterRuleMenu from "@/components/FilterRuleMenu.vue";
 import SortRuleMenu from "@/components/SortRuleMenu.vue";
-import { DEFAULT_SORT_STATE } from "@/types/sortRuleSelector";
-
-import type { SortState } from "@/types/sortRuleSelector";
+import {
+  DEFAULT_SORT_STATE,
+  type SortState
+} from "@/types/sortRuleSelector";
+import {
+  cloneFilterState,
+  createDefaultFilterState,
+  type FilterState
+} from "@/types/filterRule";
 
 const title = ref("");
 const sortState = ref<SortState>({ ...DEFAULT_SORT_STATE });
+const filterState = ref<FilterState>(createDefaultFilterState());
 
 const emit = defineEmits<{
-  submit: [title: string, sortState: SortState];
+  submit: [title: string, sortState: SortState, filterState: FilterState];
 }>();
 
 watch(
-  [title, sortState],
-  ([newTitle, newSortState]) => {
-    debounce((currentTitle: string, currentSortState: SortState) => {
-      emit("submit", currentTitle, currentSortState);
-    }, 50)(newTitle, newSortState);
+  [title, sortState, filterState],
+  ([newTitle, newSortState, newFilterState]) => {
+    debounce(
+      (
+        currentTitle: string,
+        currentSortState: SortState,
+        currentFilterState: FilterState
+      ) => {
+        emit(
+          "submit",
+          currentTitle,
+          currentSortState,
+          cloneFilterState(currentFilterState)
+        );
+      },
+      50
+    )(newTitle, newSortState, newFilterState);
   },
   { immediate: true }
 );
+
+const handleFilterStateChange = (state: FilterState) => {
+  filterState.value = cloneFilterState(state);
+};
 </script>
 
 <template>
@@ -52,7 +75,7 @@ watch(
         <sort-rule-menu @sort-state="state => (sortState = state)" />
       </div>
       <div class="rules-selector-container">
-        <filter-rule-menu />
+        <filter-rule-menu @filter-state="handleFilterStateChange" />
       </div>
     </div>
   </div>

@@ -5,17 +5,23 @@ import ArticleSearchPanel from "@/components/ArticleSearchPanel.vue";
 import ArticleSummaryItem from "@/components/ArticleSummaryItem.vue";
 import TagExplorerPanel from "@/components/TagExplorerPanel.vue";
 import { articles } from "@/data/articles-index.json";
+import type { ArticleMetadata } from "@/types/article";
+import {
+  FilterRuleTypes,
+  cloneFilterState,
+  createDefaultFilterState,
+  type FilterRule,
+  type FilterState
+} from "@/types/filterRule";
 import {
   DEFAULT_SORT_STATE,
   SortKeys,
   type SortState
 } from "@/types/sortRuleSelector";
 
-import type { ArticleMetadata } from "@/types/article";
-
-
 const titlePattern = ref<string>("");
 const sortState = ref<SortState>({ ...DEFAULT_SORT_STATE });
+const filterState = ref<FilterState>(createDefaultFilterState());
 // 默认值要深拷贝一个出来
 
 const isShowUpdatedDate = computed<boolean>(() => {
@@ -25,13 +31,51 @@ const isShowUpdatedDate = computed<boolean>(() => {
   );
 });
 
-
 const HIGHLIGHT_TAG_PATTERN = /<span>(.*?)<\/span>/gi; // 这是负责清理高亮的正则
 
 // 转义正则特殊字符
 // 要不然输个 \w 进去就报错
 const escapeRegExp = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const hasActiveFilter = computed(() =>
+  filterState.value.rules.some(rule => rule.values.length > 0)
+);
+
+const matchArticleWithRule = (
+  article: ArticleMetadata,
+  rule: FilterRule
+): boolean => {
+  const sourceValues =
+    rule.type === FilterRuleTypes.TAG ? article.tags : article.categories;
+
+  if (rule.operator === "eq") {
+    return rule.values.some(value => sourceValues.includes(value));
+  }
+  // ne: 文章中不存在这些值即可满足
+  return rule.values.every(value => !sourceValues.includes(value));
+};
+
+const applyFilterRules = (items: ArticleMetadata[]): ArticleMetadata[] => {
+  const activeRules = filterState.value.rules.filter(
+    rule => rule.values.length > 0
+  );
+
+  if (activeRules.length === 0) {
+    return items;
+  }
+
+  const shouldMatchAll = filterState.value.matchMode === "all";
+
+  return items.filter(article => {
+    const matchResults = activeRules.map(rule =>
+      matchArticleWithRule(article, rule)
+    );
+    return shouldMatchAll
+      ? matchResults.every(Boolean)
+      : matchResults.some(Boolean);
+  });
+};
 
 const filtratedArticles = computed<ArticleMetadata[]>(() => {
   const keyword = titlePattern.value.trim();
@@ -43,13 +87,15 @@ const filtratedArticles = computed<ArticleMetadata[]>(() => {
     }))
     .filter(metadata => metadata.title.includes(keyword));
 
+  const filteredArticles = applyFilterRules(normalizedArticles);
+
   if (keyword === "") {
-    return normalizedArticles;
+    return filteredArticles;
   }
 
   const highlightRegex = new RegExp(escapeRegExp(keyword), "gi"); // 这是标记高亮元素的正则
 
-  return normalizedArticles.map(metadata => ({
+  return filteredArticles.map(metadata => ({
     ...metadata,
     title: metadata.title.replace(
       highlightRegex,
@@ -83,10 +129,12 @@ const sortedArticles = computed<ArticleMetadata[]>(() => {
 
 const handleFilterSubmit = (
   newTitlePattern: string,
-  newSortState: SortState
+  newSortState: SortState,
+  newFilterState: FilterState
 ) => {
   sortState.value = { ...newSortState }; // 一定记得开新对象
   titlePattern.value = newTitlePattern;
+  filterState.value = cloneFilterState(newFilterState);
 };
 </script>
 
@@ -95,11 +143,11 @@ const handleFilterSubmit = (
     <p class="main_title">归档</p>
   </div>
   <div class="body_container">
-    <tag-explorer-panel style="margin-bottom: 1.5em;" />
+    <tag-explorer-panel style="margin-bottom: 1.5em" />
     <div class="filter-container">
       <article-search-panel @submit="handleFilterSubmit" />
       <div class="article-count-container">
-        <span v-if="titlePattern === ''">已经写了</span>
+        <span v-if="titlePattern === '' && !hasActiveFilter">已经写了</span>
         <span v-else>已筛选出</span>
         <span class="article-count">{{ sortedArticles.length }}</span>
         <span>篇文章</span>
@@ -111,15 +159,13 @@ const handleFilterSubmit = (
           border-bottom: 2px solid #aaa;
           margin-top: 25px;
           margin-bottom: 1em;
-        "
-      ></div>
+        "></div>
       <div class="articles-container">
         <article-summary-item
           v-for="article in sortedArticles"
           :key="article.uuid"
           :article="article"
-          :is-show-updated-date="isShowUpdatedDate"
-        />
+          :is-show-updated-date="isShowUpdatedDate" />
         <p v-if="sortedArticles.length === 0" class="empty-state">
           没有找到匹配的文章
         </p>

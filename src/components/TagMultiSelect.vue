@@ -3,51 +3,85 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 
 import searchIconUrl from "@/assets/icons/search.svg";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
+
+const props = defineProps<{
+  options: string[];
+  modelValue?: string[];
+  placeholder?: string;
+}>();
+
+const emit = defineEmits<{
+  (event: "selected", payload: string[]): void;
+  (event: "update:modelValue", payload: string[]): void;
+}>();
+
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
-const tags = ref(["aa", "bbabbb", "ccc", "ddddddd", "eeee", "fffff", "g"]);
-
-const selectedTagIndices = ref<number[]>([]);
-const showedSelectedTagIndices = ref<number[]>([]);
-
 const tagSearchText = ref("");
+const selectedTags = ref<string[]>(props.modelValue ? [...props.modelValue] : []);
+const visibleSelectedTagIndices = ref<number[]>([]);
+
+const placeholderText = computed(() => props.placeholder ?? "请选择标签");
+const tagOptions = computed(() => props.options ?? []);
+const selectedTagSet = computed(() => new Set(selectedTags.value));
+
+const arraysAreEqual = (a: string[], b: string[]): boolean =>
+  a.length === b.length && a.every((value, index) => value === b[index]);
+
+const emitSelection = (values: string[]) => {
+  emit("selected", values);
+  emit("update:modelValue", values);
+};
+
+watch(
+  () => props.modelValue,
+  newValue => {
+    const normalized = Array.isArray(newValue) ? [...newValue] : [];
+    if (!arraysAreEqual(normalized, selectedTags.value)) {
+      selectedTags.value = normalized;
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  tagOptions,
+  options => {
+    const optionSet = new Set(options);
+    const filtered = selectedTags.value.filter(tag => optionSet.has(tag));
+    if (!arraysAreEqual(filtered, selectedTags.value)) {
+      selectedTags.value = filtered;
+      emitSelection(filtered);
+    }
+  },
+  { immediate: true }
+);
+
+const handleSelect = (tag: string) => {
+  const next = [...selectedTags.value];
+  const existingIndex = next.indexOf(tag);
+  if (existingIndex === -1) {
+    next.push(tag);
+  } else {
+    next.splice(existingIndex, 1);
+  }
+  selectedTags.value = next;
+  emitSelection(next);
+};
+
 const showedTags = computed(() => {
   if (!tagSearchText.value) {
-    return tags.value;
+    return tagOptions.value;
   }
-  return tags.value.filter(tag =>
-    tag.toLowerCase().includes(tagSearchText.value.toLowerCase())
-  );
+  const keyword = tagSearchText.value.toLowerCase();
+  return tagOptions.value.filter(tag => tag.toLowerCase().includes(keyword));
 });
 
 const selectedTagsContainerRef = ref<HTMLElement | null>(null);
 const measurementSelectedTagItem = ref<HTMLElement | null>(null);
-
-const handleSelect = (idx: number) => {
-  const index = selectedTagIndices.value.indexOf(idx);
-  if (index === -1) {
-    selectedTagIndices.value.push(idx);
-  } else {
-    selectedTagIndices.value.splice(index, 1);
-  }
-};
-
 const resizeObserver = ref<ResizeObserver | null>(null);
 
-onMounted(() => {
-  if (selectedTagsContainerRef.value) {
-    resizeObserver.value = new ResizeObserver(updateShowedOpinions);
-    resizeObserver.value.observe(selectedTagsContainerRef.value);
-  }
-});
-
-onUnmounted(() => {
-  if (resizeObserver.value) {
-    resizeObserver.value.disconnect();
-  }
-});
-
-const updateShowedOpinions = async () => {
+const updateVisibleSelections = async () => {
   await nextTick();
 
   const container = selectedTagsContainerRef.value;
@@ -58,48 +92,88 @@ const updateShowedOpinions = async () => {
 
   const containerWidth = container.clientWidth;
   if (containerWidth === 0) return;
-  // 当下来菜单隐藏时，容器宽度为 0，跳过更新以保持上次有效布局。
+  // Dropdown is hidden when closed which temporarily reports width=0.
 
-  const newShowedIndices = [];
+  const newVisibleIndices: number[] = [];
   let currentWidth = 0;
 
-  for (const index of selectedTagIndices.value) {
-    item.textContent = tags.value[index];
+  selectedTags.value.forEach((value, index) => {
+    item.textContent = value;
     const itemWidth = item.offsetWidth;
 
     if (currentWidth + itemWidth <= containerWidth) {
-      newShowedIndices.push(index);
+      newVisibleIndices.push(index);
       currentWidth += itemWidth;
-    } else {
-      break;
+    }
+  });
+
+  visibleSelectedTagIndices.value = newVisibleIndices;
+};
+
+watch(
+  selectedTags,
+  () => {
+    void updateVisibleSelections();
+  },
+  { deep: true }
+);
+
+watch(
+  () => isOpen.value,
+  opened => {
+    if (opened) {
+      void updateVisibleSelections();
     }
   }
+);
 
-  showedSelectedTagIndices.value = newShowedIndices;
-};
+onMounted(() => {
+  if (selectedTagsContainerRef.value) {
+    resizeObserver.value = new ResizeObserver(() => {
+      void updateVisibleSelections();
+    });
+    resizeObserver.value.observe(selectedTagsContainerRef.value);
+  }
+  void updateVisibleSelections();
+});
 
-watch(selectedTagIndices, updateShowedOpinions, { deep: true });
+onUnmounted(() => {
+  if (resizeObserver.value) {
+    resizeObserver.value.disconnect();
+  }
+});
 
 const getItemDisplay = (item: number, index: number) => {
+  const visibleCount = visibleSelectedTagIndices.value.length;
+  const totalCount = selectedTags.value.length;
+
   if (
-    showedSelectedTagIndices.value.length < selectedTagIndices.value.length &&
-    index === showedSelectedTagIndices.value.length - 1
+    visibleCount > 0 &&
+    visibleCount < totalCount &&
+    index === visibleCount - 1
   ) {
-    return `+ ${selectedTagIndices.value.length - showedSelectedTagIndices.value.length + 1}`;
+    return `+ ${totalCount - visibleCount + 1}`;
   }
-  return tags.value[item];
+  return selectedTags.value[item];
 };
+
+const isTagSelected = (tag: string) => selectedTagSet.value.has(tag);
 </script>
 
 <template>
   <div ref="containerRef" class="rule-selector">
     <button type="button" class="rule-selector-button" @click="toggleDropdown">
       <div ref="selectedTagsContainerRef" class="selected-rules-container">
-        <span
-          v-for="(item, index) in showedSelectedTagIndices"
-          :key="index"
-          class="selected-rule-item">
-          {{ getItemDisplay(item, index) }}
+        <template v-if="selectedTags.length > 0">
+          <span
+            v-for="(item, index) in visibleSelectedTagIndices"
+            :key="`${item}-${selectedTags[item]}`"
+            class="selected-rule-item">
+            {{ getItemDisplay(item, index) }}
+          </span>
+        </template>
+        <span v-else class="selected-rule-placeholder">
+          {{ placeholderText }}
         </span>
       </div>
     </button>
@@ -120,11 +194,11 @@ const getItemDisplay = (item: number, index: number) => {
       </div>
       <div class="tags-container">
         <div
-          v-for="(tag, index) in showedTags"
-          :key="index"
+          v-for="tag in showedTags"
+          :key="tag"
           class="tag-item"
-          :class="{ selected: selectedTagIndices.includes(index) }"
-          @click="handleSelect(index)">
+          :class="{ selected: isTagSelected(tag) }"
+          @click="handleSelect(tag)">
           <span>{{ tag }}</span>
         </div>
       </div>
@@ -137,7 +211,9 @@ const getItemDisplay = (item: number, index: number) => {
 
 <style scoped lang="css">
 .search-container {
-  padding: 4px;
+  display: flex;
+  width: 100%;
+  align-items: center;
   margin-bottom: 8px;
 }
 
@@ -215,6 +291,11 @@ const getItemDisplay = (item: number, index: number) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.selected-rule-placeholder {
+  font-size: 12px;
+  color: #8c8c8c;
 }
 
 .dropdown-content {
