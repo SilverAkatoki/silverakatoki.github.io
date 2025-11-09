@@ -28,6 +28,7 @@ const OUTPUT_POST_DIR = path.join(ROOT_DIR, "public", "posts");
 const DATA_DIR = path.join(ROOT_DIR, "src", "data");
 const ARTICLES_INDEX_PATH = path.join(DATA_DIR, "articles-index.json");
 const TAGS_INDEX_PATH = path.join(DATA_DIR, "tags.json");
+const CATEGORIES_INDEX_PATH = path.join(DATA_DIR, "categories.json");
 
 const log = (message: string): void => console.log(`[prebuild] ${message}`);
 
@@ -126,6 +127,7 @@ const main = async (): Promise<void> => {
 
   const articles: ArticleMetadata[] = [];
   const tagMap = new Map<string, number>();
+  const categoryMap = new Map<string, number>();
 
   for (const file of markdownFiles) {
     log(`正在处理 ${file.name}`);
@@ -163,9 +165,18 @@ const main = async (): Promise<void> => {
         }
       });
 
+      categories.forEach(category => {
+        if (!categoryMap.has(category)) {
+          categoryMap.set(category, 1);
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          categoryMap.set(category, categoryMap.get(category)! + 1);
+        }
+      });
+
       await fs.writeFile(targetPath, `${body.trimEnd()}\n`, "utf8");
 
-      articles.push({ uuid, title, createdDate, updatedDate, categories: categories, tags });
+      articles.push({ uuid, title, createdDate, updatedDate, categories, tags });
     } catch (err: unknown) {
       log(`${err}`);
       log("已跳过该文章");
@@ -182,11 +193,16 @@ const main = async (): Promise<void> => {
   const serializedTags = [...tagMap].sort((a, b
   ) => a[0].localeCompare(b[0]));
 
+  const serializedCategories = [...categoryMap].sort((a, b
+  ) => a[0].localeCompare(b[0]));
+
   await writeJson(ARTICLES_INDEX_PATH, { articles });
   await writeJson(TAGS_INDEX_PATH, { tags: serializedTags });
+  await writeJson(CATEGORIES_INDEX_PATH, { categories: serializedCategories })
 
   log(`已写入 ${articles.length} 条文章索引到 ${path.relative(ROOT_DIR, ARTICLES_INDEX_PATH)}`);
   log(`已写入 ${serializedTags.length} 个标签到 ${path.relative(ROOT_DIR, TAGS_INDEX_PATH)}`);
+  log(`已写入 ${serializedCategories.length} 个类别到 ${path.relative(ROOT_DIR, CATEGORIES_INDEX_PATH)}`);
   log("预构建完成");
 };
 

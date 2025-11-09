@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 
+import tags from "@/data/tags.json";
+import categories from "@/data/categories.json";
+
 import AddFilterButton from "./AddFilterButton.vue";
 import FilterCategoryRuleItem from "./FilterCategoryRuleItem.vue";
 import FilterTagRuleItem from "./FilterTagRuleItem.vue";
 import filterIconUrl from "@/assets/icons/filter.svg";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
-import { articles } from "@/data/articles-index.json";
-import type { ArticleMetadata } from "@/types/article";
 import {
   FilterRuleTypes,
   cloneFilterState,
@@ -30,26 +31,20 @@ const emit = defineEmits<{
   (event: "filter-state", payload: FilterState): void;
 }>();
 
-const articleList = articles as ArticleMetadata[];
-
 const tagOptions = computed(() => {
-  const optionSet = new Set<string>();
-  for (const article of articleList) {
-    for (const tag of article.tags ?? []) {
-      optionSet.add(tag);
-    }
-  }
-  return Array.from(optionSet).sort((a, b) => a.localeCompare(b));
+  const raw = (tags as any)?.tags;
+  if (!Array.isArray(raw)) return [];
+  return Array.from(new Set(raw.map((item: any) => String(item[0])))).sort((a, b) =>
+    a.localeCompare(b)
+  );
 });
 
 const categoryOptions = computed(() => {
-  const optionSet = new Set<string>();
-  for (const article of articleList) {
-    for (const category of article.categories ?? []) {
-      optionSet.add(category);
-    }
-  }
-  return Array.from(optionSet).sort((a, b) => a.localeCompare(b));
+  const raw = (categories as any)?.categories;
+  if (!Array.isArray(raw)) return [];
+  return Array.from(new Set(raw.map((item: any) => String(item[0])))).sort((a, b) =>
+    a.localeCompare(b)
+  );
 });
 
 const createRule = (type: FilterRuleType): FilterRule => ({
@@ -130,23 +125,20 @@ watch(
                 :rule="rule"
                 :tags="tagOptions"
                 @change="handleRuleChange"
-                @remove="handleRemoveRule"
-              />
+                @remove="handleRemoveRule" />
               <filter-category-rule-item
                 v-else-if="rule.type === FilterRuleTypes.CATEGORY"
                 :rule="rule"
                 :categories="categoryOptions"
                 @change="handleRuleChange"
-                @remove="handleRemoveRule"
-              />
+                @remove="handleRemoveRule" />
             </template>
           </template>
           <p v-else class="filter-empty">暂未添加过滤条件</p>
           <div>
             <add-filter-button
               :available-types="availableRuleTypes"
-              @select="handleAddRule"
-            />
+              @select="handleAddRule" />
           </div>
         </div>
 
