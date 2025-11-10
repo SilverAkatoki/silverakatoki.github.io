@@ -8,6 +8,6 @@ dist
 
 .vscode
 
-data/*
+src/data/*
 public/*
 posts/*
