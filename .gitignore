@@ -8,6 +8,8 @@ dist
 
 .vscode
 
-src/data/*
+src/data/*.json
+!src/data/site-settings.json
+
 public/*
 posts/*
