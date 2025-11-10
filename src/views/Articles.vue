@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
-import ArticleSearchPanel from "@/components/ArticleSearchPanel.vue";
+import ArticleSearchPanel from "@/components/search/ArticleSearchPanel.vue";
 import ArticleSummaryItem from "@/components/ArticleSummaryItem.vue";
 import TagExplorerPanel from "@/components/TagExplorerPanel.vue";
 import { articles } from "@/data/articles-index.json";

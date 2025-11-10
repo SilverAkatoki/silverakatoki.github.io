@@ -4,8 +4,8 @@ import { ref, watch } from "vue";
 import { debounce } from "ts-debounce";
 
 import searchIconUrl from "@/assets/icons/search.svg";
-import FilterRuleMenu from "@/components/FilterRuleMenu.vue";
-import SortRuleMenu from "@/components/SortRuleMenu.vue";
+import FilterRuleMenu from "@/components/search/filter/FilterRuleMenu.vue";
+import SortRuleMenu from "@/components/search/sort/SortRuleMenu.vue";
 import { DEFAULT_SORT_STATE, type SortState } from "@/types/sortRuleSelector";
 import {
   cloneFilterState,

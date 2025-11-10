@@ -4,9 +4,9 @@ import { computed, ref, watch } from "vue";
 import tags from "@/data/tags.json";
 import categories from "@/data/categories.json";
 
-import AddFilterButton from "./AddFilterButton.vue";
-import FilterCategoryRuleItem from "./FilterCategoryRuleItem.vue";
-import FilterTagRuleItem from "./FilterTagRuleItem.vue";
+import AddFilterButton from "@/components/search/filter/AddFilterButton.vue";
+import FilterCategoryRuleItem from "@/components/search/filter/category/FilterCategoryRuleItem.vue";
+import FilterTagRuleItem from "@/components/search/filter/tag/FilterTagRuleItem.vue";
 import filterIconUrl from "@/assets/icons/filter.svg";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 import {
