@@ -4,6 +4,7 @@ import process from "node:process";
 
 import { v4 as uuidv4 } from "uuid";
 import pkg from "yaml-front-matter";
+import { marked, type Token } from "marked";
 
 import siteInfo from "../src/data/site-settings.json" with { type: "json" };
 
@@ -23,6 +24,7 @@ const ROOT_DIR = process.cwd();
 // 文章目录
 const INPUT_POSTS_DIR = path.join(ROOT_DIR, "posts");
 const OUTPUT_POST_DIR = path.join(ROOT_DIR, "public", "posts");
+const OUTPUT_POST_IMG_DIR = path.join(OUTPUT_POST_DIR, "imgs");
 
 // 配置目录
 const DATA_DIR = path.join(ROOT_DIR, "src", "data");
@@ -113,6 +115,99 @@ const writeJson = async (filePath: string, data: unknown): Promise<void> => {
   await fs.writeFile(filePath, content, "utf8");
 };
 
+const modifiedImgUrl = async (sourceImgPath: string, context: string): Promise<string> => {
+  const tokens = marked.Lexer.lex(context);
+
+  const imageTokens: Token[] = [];
+  const walkTokens = (tokens: Token[]) => {
+    for (const token of tokens) {
+      switch (token.type) {
+        case 'image':
+          imageTokens.push(token);
+          break;
+        case 'paragraph':
+        case 'blockquote':
+        case 'list_item':
+        case 'heading':
+        case 'table_cell':
+          if (token.tokens) {
+            walkTokens(token.tokens);
+          }
+          break;
+        case 'list':
+          if (token.items) {
+            walkTokens(token.items);
+          }
+          break;
+        case 'table':
+          if (token.header) {
+            walkTokens(token.header);
+          }
+          if (token.rows) {
+            for (const row of token.rows) {
+              walkTokens(row);
+            }
+          }
+          break;
+      }
+    }
+  };
+
+  walkTokens(tokens);
+
+  if (imageTokens.length === 0) {
+    return context;
+  }
+
+  // 确保目标 imgs 目录存在
+  await fs.mkdir(OUTPUT_POST_IMG_DIR, { recursive: true });
+
+  let modified = context;
+
+  // 从后向前替换，避免索引错位
+  for (let i = imageTokens.length - 1; i >= 0; i--) {
+    const token = imageTokens[i] as any;
+    if (token.type !== "image") continue;
+
+    const raw = token.raw ?? `![${token.text}](${token.href}${token.title ? ` "${token.title}"` : ''})`;
+    const idx = modified.lastIndexOf(raw);
+    if (idx === -1) continue;
+
+    const href = String(token.href ?? "").trim();
+    if (!href) continue;
+
+    // 只处理相对路径
+    if (/^(https?:\/\/|\/|data:)/i.test(href)) {
+      continue;
+    }
+
+    const srcImgFullPath = path.normalize(path.join(sourceImgPath, href));
+
+    // 保留原扩展名
+    const ext = path.extname(href) || "";
+    const newFilename = `${uuidv4()}${ext}`;
+    const destImgFullPath = path.join(OUTPUT_POST_IMG_DIR, newFilename);
+
+    let newHref;
+    try {
+      // 复制文件到 public/posts/imgs/<uuid>.<ext>
+      await fs.copyFile(srcImgFullPath, destImgFullPath);
+      // 路径应该是这样 /posts/imgs/<uuid>.<ext>
+      newHref = `/posts/imgs/${newFilename}`;
+      log(`已复制图片 ${href} -> ${path.relative(ROOT_DIR, destImgFullPath)}`);
+    } catch (err: unknown) {
+      log(`复制图片失败: ${srcImgFullPath}： ${String(err)}`);
+      // 保持原 href
+      newHref = href;
+    }
+
+    const newImageMarkdown = `![${token.text ?? ""}](${newHref}${token.title ? ` "${token.title}"` : ""})`;
+    modified = modified.substring(0, idx) + newImageMarkdown + modified.substring(idx + raw.length);
+  }
+
+  return modified;
+};
+
 const main = async (): Promise<void> => {
   log("开始预构建文章与索引");
 
@@ -121,7 +216,27 @@ const main = async (): Promise<void> => {
   await fs.mkdir(DATA_DIR, { recursive: true });
 
   const entries = await fs.readdir(INPUT_POSTS_DIR, { withFileTypes: true });
-  const markdownFiles = entries.filter(entry => entry.isFile() && entry.name.endsWith(".md"));
+  const markdownFiles: { name: string }[] = [];
+  for (const entry of entries) {
+    if (entry.isFile() && entry.name.endsWith(".md")) {
+      markdownFiles.push({ name: entry.name });
+      continue;
+    }
+    if (entry.isDirectory()) {
+      const subPath = path.join(INPUT_POSTS_DIR, entry.name);
+      try {
+        const subEntries = await fs.readdir(subPath, { withFileTypes: true });
+        for (const subEntry of subEntries) {
+          if (subEntry.isFile() && subEntry.name.endsWith(".md")) {
+            // 存储相对 posts 目录的路径，例如 "subdir/file.md"
+            markdownFiles.push({ name: path.join(entry.name, subEntry.name) });
+          }
+        }
+      } catch {
+        // 子目录读取失败则跳过
+      }
+    }
+  }
 
   log(`发现 ${markdownFiles.length} 个 Markdown 文件`);
 
@@ -134,7 +249,9 @@ const main = async (): Promise<void> => {
     try {
       const uuid = uuidv4();  // 全随机 UUID
 
+    
       const sourcePath = path.join(INPUT_POSTS_DIR, file.name);
+      const sourceDir = path.dirname(sourcePath);
       const targetPath = path.join(OUTPUT_POST_DIR, `${uuid}.md`);
 
       const rawContent = await fs.readFile(sourcePath, "utf8");
@@ -174,7 +291,9 @@ const main = async (): Promise<void> => {
         }
       });
 
-      await fs.writeFile(targetPath, `${body.trimEnd()}\n`, "utf8");
+      const context = await modifiedImgUrl(sourceDir, `${body.trimEnd()}\n`);
+
+      await fs.writeFile(targetPath, context, "utf8");
 
       articles.push({ uuid, title, createdDate, updatedDate, categories, tags });
     } catch (err: unknown) {
