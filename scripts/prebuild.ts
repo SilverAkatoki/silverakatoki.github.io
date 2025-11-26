@@ -277,7 +277,6 @@ const main = async (): Promise<void> => {
         if (!tagMap.has(tag)) {
           tagMap.set(tag, 1);
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           tagMap.set(tag, tagMap.get(tag)! + 1);
         }
       });
@@ -286,7 +285,6 @@ const main = async (): Promise<void> => {
         if (!categoryMap.has(category)) {
           categoryMap.set(category, 1);
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           categoryMap.set(category, categoryMap.get(category)! + 1);
         }
       });

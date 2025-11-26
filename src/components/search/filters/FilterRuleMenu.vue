@@ -4,9 +4,9 @@ import { computed, ref, watch } from "vue";
 import tags from "@/data/tags.json";
 import categories from "@/data/categories.json";
 
-import AddFilterButton from "@/components/search/filter/AddFilterButton.vue";
-import FilterCategoryRuleItem from "@/components/search/filter/category/FilterCategoryRuleItem.vue";
-import FilterTagRuleItem from "@/components/search/filter/tag/FilterTagRuleItem.vue";
+import AddFilterButton from "@/components/search/filters/AddFilterButton.vue";
+import FilterCategoryRuleItem from "@/components/search/filters/category/FilterCategoryRuleItem.vue";
+import FilterTagRuleItem from "@/components/search/filters/tag/FilterTagRuleItem.vue";
 import filterIconUrl from "@/assets/icons/filter.svg";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
 import {
@@ -106,6 +106,7 @@ watch(
   <div ref="containerRef" class="drop-button-container">
     <button type="button" class="drop-button" @click="toggleDropdown">
       <img :src="filterIconUrl" class="button-icon" alt="" aria-hidden="true" />
+      <span class="button-label" v-show="rules.length !== 0">{{ rules.length }}</span>
     </button>
     <div v-show="isOpen" class="dropdown-content">
       <div class="filter-content">
@@ -153,6 +154,13 @@ watch(
 </template>
 
 <style scoped lang="css">
+.button-label {
+  margin-left: 3px;
+  font-size: 1rem;
+  color: #4a4a4a;
+  white-space: nowrap;
+}
+
 .reset-button {
   width: 100%;
 }
@@ -202,7 +210,7 @@ select {
   left: 0;
   /* 必须定死宽度，内层全是百分比 */
   /* 涉及到里面tag超出不显示的逻辑 */
-  width: 1300%;
+  width: 400px;
   background-color: white;
   border: 1px solid silver;
   border-radius: 3px;

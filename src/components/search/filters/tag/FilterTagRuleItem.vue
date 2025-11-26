@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-import ruleIconUrl from "@/assets/icons/category.svg";
-import RuleMultiSelect from "@/components/search/filter/category/RuleMultiSelect.vue";
+import TagMultiSelect from "@/components/search/filters/tag/TagMultiSelect.vue";
+import tagIconUrl from "@/assets/icons/tag.svg";
 import type { FilterRule, FilterRuleOperator } from "@/types/filterRule";
 
 const props = defineProps<{
-  categories: string[];
+  tags: string[];
   rule: FilterRule;
 }>();
 
@@ -58,15 +58,15 @@ const handleSelectedItems = (value: string[]) => {
 
 <template>
   <div class="filter-rule-container">
-    <img :src="ruleIconUrl" class="icon" alt="" />
-    <span class="description">类别</span>
-    <select class="rule-operator" v-model="selectedOperator">
+    <img :src="tagIconUrl" class="icon" alt="" />
+    <span class="description">标签</span>
+    <select class="rule-term" v-model="selectedOperator">
       <option value="eq">等于</option>
       <option value="ne">不等于</option>
     </select>
     <div class="rule">
-      <rule-multi-select
-        :options="categories"
+      <tag-multi-select
+        :options="tags"
         :model-value="selectedItems"
         @selected="handleSelectedItems"
       />
@@ -106,7 +106,7 @@ const handleSelectedItems = (value: string[]) => {
   box-sizing: border-box;
 }
 
-.rule-operator {
+.rule-term {
   flex: 1;
   min-width: 80px;
   max-width: min-content;

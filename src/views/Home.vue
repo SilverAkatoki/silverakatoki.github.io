@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 
-import ArticleSummaryItem from "@/components/ArticleSummaryItem.vue";
-import Readme from "@/components/Readme.vue";
+import ArticleSummaryItem from "@/components/articles/ArticleSummaryItem.vue";
+import Readme from "@/components/common/Readme.vue";
 import { articles } from "@/data/articles-index.json";
 import siteSettings from "@/data/site-settings.json";
 import { calcDaysDiff, getRandomItem } from "@/utils/utils";

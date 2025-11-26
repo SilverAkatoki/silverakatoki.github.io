@@ -110,13 +110,7 @@ const updateVisibleSelections = async () => {
   visibleSelectedTagIndices.value = newVisibleIndices;
 };
 
-watch(
-  selectedTags,
-  () => {
-    void updateVisibleSelections();
-  },
-  { deep: true }
-);
+watch(selectedTags, () => updateVisibleSelections, { deep: true });
 
 watch(
   () => isOpen.value,

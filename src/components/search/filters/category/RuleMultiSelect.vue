@@ -87,13 +87,7 @@ const updateVisibleSelections = async () => {
   visibleSelectionIndices.value = newVisibleIndices;
 };
 
-watch(
-  selectedValues,
-  () => {
-    void updateVisibleSelections();
-  },
-  { deep: true }
-);
+watch(selectedValues, updateVisibleSelections, { deep: true });
 
 onMounted(() => {
   if (selectedRulesContainerRef.value) {
@@ -125,8 +119,7 @@ const getItemDisplay = (selectedIndex: number, loopIndex: number) => {
   return selectedValues.value[selectedIndex];
 };
 
-const isOptionSelected = (option: string) =>
-  selectedValueSet.value.has(option);
+const isOptionSelected = (option: string) => selectedValueSet.value.has(option);
 </script>
 
 <template>
@@ -247,4 +240,3 @@ const isOptionSelected = (option: string) =>
   background-color: #eee;
 }
 </style>
-
