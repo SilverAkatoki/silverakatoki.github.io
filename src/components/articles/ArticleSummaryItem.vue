@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import type { ArticleMetadata } from "@/types/article";
+import { computed } from "vue";
 
-defineProps<{
+const { article, isShowUpdatedDate, isShowPlaceholder } = defineProps<{
   article: ArticleMetadata;
   isShowUpdatedDate: boolean;
+  isShowPlaceholder: boolean;
 }>();
+
+const showedText = computed(() => {
+  if (isShowPlaceholder) {
+    return "●";
+  }
+  return isShowUpdatedDate ? article.updatedDate : article.createdDate;
+});
 </script>
 
 <template>
@@ -12,12 +21,11 @@ defineProps<{
     <router-link
       v-if="article.uuid"
       :to="{ path: '/article', query: { uuid: article.uuid } }"
-      class="article-title"
-    >
+      class="article-title">
       <div class="title-field" v-html="article.title"></div>
     </router-link>
     <span class="article-time">
-      {{ isShowUpdatedDate ? article.updatedDate : article.createdDate }}
+      {{ showedText }}
     </span>
   </div>
 </template>

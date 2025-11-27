@@ -31,6 +31,11 @@ const isShowUpdatedDate = computed<boolean>(() => {
   );
 });
 
+const isShowPlaceholder = computed<boolean>(() => {
+  const { sortProperty } = sortState.value;
+  return sortProperty === SortKeys.DEFAULT;
+});
+
 const HIGHLIGHT_TAG_PATTERN = /<span>(.*?)<\/span>/gi; // 这是负责清理高亮的正则
 
 // 转义正则特殊字符
@@ -85,7 +90,12 @@ const filtratedArticles = computed<ArticleMetadata[]>(() => {
       ...metadata,
       title: metadata.title.replace(HIGHLIGHT_TAG_PATTERN, "$1") // 清理以前的高亮
     }))
-    .filter(metadata => metadata.title.includes(keyword));
+    .filter(metadata =>
+      metadata.title
+        .toLocaleLowerCase()
+        .replace(/\s+/g, "")
+        .includes(keyword.toLocaleLowerCase().replace(/\s+/g, ""))
+    ); // 忽略大小写和中间的空格
 
   const filteredArticles = applyFilterRules(normalizedArticles);
 
@@ -93,7 +103,11 @@ const filtratedArticles = computed<ArticleMetadata[]>(() => {
     return filteredArticles;
   }
 
-  const highlightRegex = new RegExp(escapeRegExp(keyword), "gi"); // 这是标记高亮元素的正则
+  const highlightRegex = new RegExp(
+    escapeRegExp(keyword.replace(/\s+/g, "")).split("").join("\\s*"),
+    "gi"
+  ); // 这是标记高亮元素的正则
+
 
   return filteredArticles.map(metadata => ({
     ...metadata,
@@ -165,7 +179,8 @@ const handleFilterSubmit = (
           v-for="article in sortedArticles"
           :key="article.uuid"
           :article="article"
-          :is-show-updated-date="isShowUpdatedDate" />
+          :is-show-updated-date="isShowUpdatedDate"
+          :is-show-placeholder="isShowPlaceholder" />
         <p v-if="sortedArticles.length === 0" class="empty-state">
           没有找到匹配的文章
         </p>

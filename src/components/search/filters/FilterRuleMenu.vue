@@ -25,6 +25,9 @@ const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
 const matchMode = ref<FilterMatchMode>(createDefaultFilterState().matchMode);
 const rules = ref<FilterRule[]>([]);
+const usedRuleCount = computed(
+  () => rules.value.filter(rule => rule.values.length !== 0).length
+);
 const allRuleTypes = Object.values(FilterRuleTypes) as FilterRuleType[];
 
 const emit = defineEmits<{
@@ -34,16 +37,16 @@ const emit = defineEmits<{
 const tagOptions = computed(() => {
   const raw = (tags as any)?.tags;
   if (!Array.isArray(raw)) return [];
-  return Array.from(new Set(raw.map((item: any) => String(item[0])))).sort((a, b) =>
-    a.localeCompare(b)
+  return Array.from(new Set(raw.map((item: any) => String(item[0])))).sort(
+    (a, b) => a.localeCompare(b)
   );
 });
 
 const categoryOptions = computed(() => {
   const raw = (categories as any)?.categories;
   if (!Array.isArray(raw)) return [];
-  return Array.from(new Set(raw.map((item: any) => String(item[0])))).sort((a, b) =>
-    a.localeCompare(b)
+  return Array.from(new Set(raw.map((item: any) => String(item[0])))).sort(
+    (a, b) => a.localeCompare(b)
   );
 });
 
@@ -106,7 +109,9 @@ watch(
   <div ref="containerRef" class="drop-button-container">
     <button type="button" class="drop-button" @click="toggleDropdown">
       <img :src="filterIconUrl" class="button-icon" alt="" aria-hidden="true" />
-      <span class="button-label" v-show="rules.length !== 0">{{ rules.length }}</span>
+      <span class="button-label" v-show="usedRuleCount !== 0">
+        {{ usedRuleCount }}
+      </span>
     </button>
     <div v-show="isOpen" class="dropdown-content">
       <div class="filter-content">

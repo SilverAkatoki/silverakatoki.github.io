@@ -74,6 +74,7 @@ onMounted(() => {
           :key="article.uuid"
           :article="article"
           :is-show-updated-date="true"
+          :is-show-placeholder="false"
         />
       </div>
     </div>

@@ -1,21 +1,86 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 
 import { tags } from "@/data/tags.json";
 const isExpanded = ref(false);
+const showToggleButton = ref(false);
+
+const tagsContainerRef = ref<HTMLElement | null>(null);
+const resizeObserver = ref<ResizeObserver | null>(null);
+
+onMounted(() => {
+  if (tagsContainerRef.value) {
+    resizeObserver.value = new ResizeObserver(() => {
+      void resolveTagContainerHeightChanged();
+    });
+    resizeObserver.value.observe(tagsContainerRef.value);
+  }
+  void resolveTagContainerHeightChanged();
+});
+
+onUnmounted(() => {
+  if (resizeObserver.value) {
+    resizeObserver.value.disconnect();
+  }
+});
+
+const resolveTagContainerHeightChanged = () => {
+  updateToggleButtonShow();
+  updateTagCotainerHeight();
+};
+
+const updateToggleButtonShow = () => {
+  if (tagsContainerRef.value === null) return;
+
+  const container = tagsContainerRef.value;
+
+  // 临时解除 max-height 限制以测量实际高度
+  // 因为是依赖于元素换行后挤压测得真实的 DOM 高度
+  // 最后记得还原回去，要不然显示 bug
+  const originalMaxHeight = container.style.maxHeight;
+  container.style.maxHeight = "none";
+  const fullHeight = container.scrollHeight;
+  container.style.maxHeight = originalMaxHeight;
+
+  const itemHeight = container.querySelector(".tag-item")?.clientHeight || 0;
+
+  if (fullHeight > itemHeight) {
+    showToggleButton.value = true;
+  }
+};
+
+const updateTagCotainerHeight = () => {
+  if (tagsContainerRef.value === null) return;
+
+  if (!isExpanded.value) {
+    const itemHeight =
+      tagsContainerRef.value.querySelector(".tag-item")?.clientHeight || 0;
+    // 靠限制限定在一行内
+    tagsContainerRef.value.style.maxHeight = `${itemHeight}px`;
+  } else {
+    // 让 DOM 自然被元素挤压膨胀
+    tagsContainerRef.value.style.maxHeight = "none";
+  }
+};
+
+// 不监听就会按了按钮没反应
+watch(isExpanded, updateTagCotainerHeight);
 </script>
 
 <template>
-  <div class="artocle-tags-selector">
+  <div class="article-tags-selector">
     <div class="header">
       <span class="title">总共有 {{ tags.length }} 个标签</span>
-      <button class="toggle-btn" @click="isExpanded = !isExpanded">
-        {{ isExpanded ? "关闭" : "展开" }}
+      <button
+        class="toggle-btn"
+        @click="isExpanded = !isExpanded"
+        v-show="showToggleButton">
+        {{ isExpanded ? "收起" : "展开" }}
         <span :class="['arrow', isExpanded ? 'up' : 'down']"></span>
       </button>
     </div>
 
-    <div class="tags-container" :class="{ expanded: isExpanded }">
+    <div class="tags-container" ref="tagsContainerRef">
       <div v-for="tag in tags" :key="tag[0]" class="tag-item">
         <a href="#" class="tag-link">
           <span class="bullet"></span>
@@ -28,7 +93,7 @@ const isExpanded = ref(false);
 </template>
 
 <style scoped>
-.artocle-tags-selector {
+.article-tags-selector {
   font-family: Arial, sans-serif;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -85,13 +150,7 @@ const isExpanded = ref(false);
   flex-wrap: wrap;
   gap: 6px 12px;
   line-height: 28px;
-  max-height: 28px;
   overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.tags-container.expanded {
-  max-height: none;
 }
 
 .tag-item {
