@@ -14,8 +14,7 @@ import siteSettings from "@/data/site-settings.json";
             to="/"
             class="navigation_button"
             :class="{ inactivated: $route.path === '/' }"
-            :style="$route.path === '/' ? 'pointer-events:none;' : ''"
-          >
+            :style="$route.path === '/' ? 'pointer-events:none;' : ''">
             主页
           </router-link>
         </li>
@@ -25,8 +24,7 @@ import siteSettings from "@/data/site-settings.json";
             class="navigation_button"
             :class="{ inactivated: $route.path === '/articles' }"
             :style="$route.path === '/articles' ? 'pointer-events:none;' : ''"
-            title="这里可以查看所有文章"
-          >
+            title="这里可以查看所有文章">
             归档
           </router-link>
         </li>
@@ -37,57 +35,57 @@ import siteSettings from "@/data/site-settings.json";
 
 <style scoped>
 #head_container {
-    padding: 5px;
-    border-bottom: 1px solid #eee;
+  padding: 5px;
+  border-bottom: 1px solid #eee;
 }
 
 #head_container > a {
-    padding-left: 31.4vh;
-    font-weight: bold;
-    font-size: larger;
-    text-decoration: none;
+  padding-left: 18.5vw;
+  font-weight: bold;
+  font-size: larger;
+  text-decoration: none;
 }
 
 #head_container > a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 #navigation_bar {
-    height: 41px;
-    background: linear-gradient(#FDFFFD, #ECECEC);
-    border-bottom: 1.5px solid #ccc;
+  height: 41px;
+  background: linear-gradient(#fdfffd, #ececec);
+  border-bottom: 1.5px solid #ccc;
 }
 
 #navigation_buttons {
-    padding-left: 31.4vh;
-    list-style: none;
-    height: 100%;
-    letter-spacing: -8px;
+  padding-left: 18.5vw;
+  list-style: none;
+  height: 100%;
+  letter-spacing: -8px;
 }
 
 #navigation_buttons > li {
-    display: inline-block;
-    letter-spacing: normal;
-    background-color: white;
-    padding: 1em 0.5em 0.25em 0.5em;
-    border-bottom: 1px solid #ccc;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
+  display: inline-block;
+  letter-spacing: normal;
+  background-color: white;
+  padding: 1em 0.5em 0.25em 0.5em;
+  border-bottom: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
 }
 
 .navigation_button.activated {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .navigation_button.activated:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 .navigation_button.inactivated {
-    color: black;
-    text-decoration: none;
+  color: black;
+  text-decoration: none;
 }
 
 /* 顶部导航栏整体样式 */

@@ -97,11 +97,12 @@ const updateVisibleSelections = async () => {
   const newVisibleIndices: number[] = [];
   let currentWidth = 0;
 
+  const EXTRA_PADDING: number = 20;
   selectedTags.value.forEach((value, index) => {
     item.textContent = value;
     const itemWidth = item.offsetWidth;
 
-    if (currentWidth + itemWidth <= containerWidth) {
+    if (currentWidth + itemWidth <= containerWidth - EXTRA_PADDING) {
       newVisibleIndices.push(index);
       currentWidth += itemWidth;
     }
@@ -110,7 +111,7 @@ const updateVisibleSelections = async () => {
   visibleSelectedTagIndices.value = newVisibleIndices;
 };
 
-watch(selectedTags, () => updateVisibleSelections, { deep: true });
+watch(selectedTags, updateVisibleSelections, { deep: true });
 
 watch(
   () => isOpen.value,
@@ -191,6 +192,7 @@ const isTagSelected = (tag: string) => selectedTagSet.value.has(tag);
       </div>
     </div>
   </div>
+  <!-- 用于测量已选标签宽度的隐藏元素 -->
   <div :style="{ position: 'absolute', left: '-9999px' }">
     <span ref="measurementSelectedTagItem" class="selected-rule-item"></span>
   </div>

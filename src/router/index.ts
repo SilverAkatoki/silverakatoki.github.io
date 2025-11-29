@@ -22,7 +22,12 @@ const routes = [
     path: "/:pathMatch(.*)*",
     name: "NotFound",
     component: () => import("@/views/NotFound.vue")
-  }
+  },
+  {
+    path: "/tag",
+    name: "Tag",
+    component: () => import("@/views/Tag.vue")
+  },
 ];
 
 const router = createRouter({

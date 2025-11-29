@@ -46,6 +46,9 @@ const updateToggleButtonShow = () => {
 
   if (fullHeight > itemHeight) {
     showToggleButton.value = true;
+  } else {
+    showToggleButton.value = false;
+    isExpanded.value = false; // 内容变少了，直接收起
   }
 };
 
@@ -65,6 +68,9 @@ const updateTagCotainerHeight = () => {
 
 // 不监听就会按了按钮没反应
 watch(isExpanded, updateTagCotainerHeight);
+
+// 手机上死活关不掉展开按钮
+window.addEventListener("resize", updateToggleButtonShow);
 </script>
 
 <template>
@@ -82,10 +88,12 @@ watch(isExpanded, updateTagCotainerHeight);
 
     <div class="tags-container" ref="tagsContainerRef">
       <div v-for="tag in tags" :key="tag[0]" class="tag-item">
-        <a href="#" class="tag-link">
+        <router-link
+          :to="{ path: '/tag', query: { tag: tag[0] } }"
+          class="tag-link">
           <span class="bullet"></span>
           {{ tag[0] }}
-        </a>
+        </router-link>
         <span class="tag-count">({{ tag[1] }})</span>
       </div>
     </div>

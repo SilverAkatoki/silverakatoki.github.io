@@ -23,8 +23,11 @@ import type {
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
 
-const matchMode = ref<FilterMatchMode>(createDefaultFilterState().matchMode);
-const rules = ref<FilterRule[]>([]);
+const initFilterState = () => cloneFilterState(createDefaultFilterState());
+const defaultState = initFilterState();
+
+const matchMode = ref<FilterMatchMode>(defaultState.matchMode);
+const rules = ref<FilterRule[]>(defaultState.rules);
 const usedRuleCount = computed(
   () => rules.value.filter(rule => rule.values.length !== 0).length
 );
@@ -80,9 +83,9 @@ const handleRemoveRule = (ruleId: string) => {
 };
 
 const handleReset = () => {
-  const defaultState = createDefaultFilterState();
+  const defaultState = initFilterState();
   matchMode.value = defaultState.matchMode;
-  rules.value = [];
+  rules.value = defaultState.rules;
 };
 
 const availableRuleTypes = computed<FilterRuleType[]>(() => {

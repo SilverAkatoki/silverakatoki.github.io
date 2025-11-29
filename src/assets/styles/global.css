@@ -1,7 +1,7 @@
 @import url("https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css");
 
 :root {
-  --body-container-margin: 35vh;
+  --body-container-margin: 20vw;
   --text-gray: #898989;
   --border-gray: #c0c0c0;
   --background-gray: #f8f8f8;

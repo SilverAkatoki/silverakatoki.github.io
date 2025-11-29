@@ -23,14 +23,23 @@ export interface FilterState {
 
 export const DEFAULT_FILTER_MATCH_MODE: FilterMatchMode = "all";
 
+const createEmptyTagRule = (): FilterRule => ({
+  id:
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `tag-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  type: FilterRuleTypes.TAG,
+  operator: "eq",
+  values: []
+});
+
 export const DEFAULT_FILTER_STATE: FilterState = {
   matchMode: DEFAULT_FILTER_MATCH_MODE,
-  rules: []
+  rules: [createEmptyTagRule()]
 };
 
 export const createDefaultFilterState = (): FilterState => ({
-  matchMode: DEFAULT_FILTER_MATCH_MODE,
-  rules: []
+ ...DEFAULT_FILTER_STATE
 });
 
 export const cloneFilterState = (state: FilterState): FilterState => ({
