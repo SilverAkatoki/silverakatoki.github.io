@@ -69,7 +69,7 @@ fn main() {
 
 放一张刷出来的热成像 SVK
 
-![BF6](/posts/imgs/ov2wJsCf1ru3oH5qmhEqMM.jpg)
+![BF6](/posts/imgs/pD5LFhKfTZr3bThrw5VmNr.jpg)
 
 ## 数学公式
 
