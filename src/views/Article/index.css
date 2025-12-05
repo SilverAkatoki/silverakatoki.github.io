@@ -2,7 +2,6 @@
 @import "katex/dist/katex.min.css";
 @import url("../../assets/styles/markdown.css");
 
-
 .article-error {
   max-width: 900px;
   margin: 2rem auto;
@@ -40,7 +39,7 @@
 
 .article-meta-term {
   margin: 0;
-  flex: 0 0 7em;  /* 如果元信息描述多了就改这里 */
+  flex: 0 0 7em; /* 如果元信息描述多了就改这里 */
   text-align: right;
   font-weight: 600;
   font-size: 0.75rem;

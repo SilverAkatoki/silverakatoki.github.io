@@ -7,9 +7,7 @@ import { articles } from "@/data/articles-index.json";
 import siteSettings from "@/data/site-settings.json";
 import { calcDaysDiff, getRandomItem } from "@/utils/utils";
 
-
 import type { FriendLink, SiteInfo } from "@/types/home";
-
 
 // 防止删干净后的处理
 const siteInfo: SiteInfo = {
@@ -40,9 +38,14 @@ onMounted(() => {
       <span class="time-label">上次更新</span>
       <span class="last-update-date">{{ lastUpdateDate }}</span>
       <span class="separator">|</span>
-      <span class="time-label">距今</span>
-      <span class="last-update-date-distance">{{ laatUpdateDateDiff }}</span>
-      <span>天</span>
+      <template v-if="laatUpdateDateDiff !== 0">
+        <span class="time-label">距今</span>
+        <span class="last-update-date-distance">{{ laatUpdateDateDiff }}</span>
+        <span>天</span>
+      </template>
+      <template v-else>
+        <span class="time-label">也就是今天</span>
+      </template>
     </div>
   </div>
   <div class="body-container">
@@ -58,8 +61,7 @@ onMounted(() => {
       <ul
         v-for="link in siteInfo.friendLink"
         :key="link.url"
-        class="friend-links"
-      >
+        class="friend-links">
         <li class="friend-link-item">
           <a :href="link.url" title="前往他的博客">{{ link.name }}</a>
         </li>
@@ -74,8 +76,7 @@ onMounted(() => {
           :key="article.uuid"
           :article="article"
           :is-show-updated-date="true"
-          :is-show-placeholder="false"
-        />
+          :is-show-placeholder="false" />
       </div>
     </div>
   </div>

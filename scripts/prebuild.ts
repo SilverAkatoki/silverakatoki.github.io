@@ -2,7 +2,7 @@
 import path from "node:path";
 import process from "node:process";
 
-import { v4 as uuidv4 } from "uuid";
+import short from "short-uuid";
 import pkg from "yaml-front-matter";
 import { marked, type Token } from "marked";
 
@@ -185,7 +185,7 @@ const modifiedImgUrl = async (sourceImgPath: string, context: string): Promise<s
 
     // 保留原扩展名
     const ext = path.extname(href) || "";
-    const newFilename = `${uuidv4()}${ext}`;
+    const newFilename = `${short.generate()}${ext}`;
     const destImgFullPath = path.join(OUTPUT_POST_IMG_DIR, newFilename);
 
     let newHref;
@@ -247,12 +247,8 @@ const main = async (): Promise<void> => {
   for (const file of markdownFiles) {
     log(`正在处理 ${file.name}`);
     try {
-      const uuid = uuidv4();  // 全随机 UUID
-
-    
       const sourcePath = path.join(INPUT_POSTS_DIR, file.name);
       const sourceDir = path.dirname(sourcePath);
-      const targetPath = path.join(OUTPUT_POST_DIR, `${uuid}.md`);
 
       const rawContent = await fs.readFile(sourcePath, "utf8");
 
@@ -268,10 +264,32 @@ const main = async (): Promise<void> => {
       }
 
       const title = inferTitle(parsed.title, body);
+
+      const hasUuid = parsed.uuid !== undefined && parsed.uuid !== null && String(parsed.uuid).trim() !== "";
+      const uuid = hasUuid
+        ? String(parsed.uuid).trim()
+        : short.generate();
+
       const createdDate = getCreateDateString(parsed.createdDate);
       const updatedDate = parsed.updatedDate !== undefined ? toDateString(parsed.updatedDate) : createdDate;
       const tags = collectElement(parsed.tags);
       const categories = collectElement(parsed.category);
+
+      // 回写 UUID 到源文件
+      if (!hasUuid) {
+        const yamlLines = Object.entries(parsed).filter(([key]) => key !== "__content").map((
+          [key, value]) => {
+          if (key === "createdDate" || key === "updatedDate") {
+            // 特判日期，因为 yaml-front-matter 会把日期解析成 Date 对象，然后就会变成很长一条
+            return `${key}: ${toDateString(value)}`;
+          }
+          return `${key}: ${value}`
+        });
+        yamlLines.unshift(`uuid: ${uuid}`);
+        const newContent = `---\n${yamlLines.join("\n")}\n---${parsed.__content}`;  // __content 包含前后的换行
+        await fs.writeFile(sourcePath, newContent, "utf8");
+        log(`已回写 UUID 到源文件 ${file.name}`);
+      }
 
       tags.forEach(tag => {
         if (!tagMap.has(tag)) {
@@ -291,6 +309,7 @@ const main = async (): Promise<void> => {
 
       const context = await modifiedImgUrl(sourceDir, `${body.trimEnd()}\n`);
 
+      const targetPath = path.join(OUTPUT_POST_DIR, `${uuid}.md`);
       await fs.writeFile(targetPath, context, "utf8");
 
       articles.push({ uuid, title, createdDate, updatedDate, categories, tags });

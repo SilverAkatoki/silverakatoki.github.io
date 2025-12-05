@@ -1,4 +1,5 @@
 @import url("https://chinese-fonts-cdn.deno.dev/packages/syst/dist/SourceHanSerifCN/result.css");
+@import url("./print.css");
 
 :root {
   --body-container-margin: 20vw;

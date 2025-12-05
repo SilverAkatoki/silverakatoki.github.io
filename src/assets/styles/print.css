@@ -1,0 +1,19 @@
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+
+  .markdown-body {
+    padding: 0;
+    max-width: max-content;
+  }
+
+  .article-meta-pane {
+    display: none !important;
+  }
+
+  @page {
+    margin: 1em;
+  }
+}

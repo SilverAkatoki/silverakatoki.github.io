@@ -59,7 +59,7 @@ const handleFilterStateChange = (state: FilterState) => {
             :src="searchIconUrl"
             alt=""
             aria-hidden="true" />
-          <input v-model="title" class="search-input" type="search" />
+          <input v-model="title" class="search-input" type="search" placeholder="查找标题" />
         </div>
       </div>
       <div class="rules-selector-container">

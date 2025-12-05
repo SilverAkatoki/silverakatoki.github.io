@@ -23,9 +23,9 @@
     "katex": "^0.16.22",
     "marked": "^16.3.0",
     "marked-footnote": "^1.4.0",
+    "short-uuid": "^6.0.3",
     "ts-debounce": "^4.0.0",
     "ts-node": "^10.9.2",
-    "uuid": "^13.0.0",
     "vue": "^3.5.17",
     "vue-i18n": "^11.1.12",
     "vue-router": "^4.5.1",
@@ -45,7 +45,6 @@
     "prettier": "^3.6.2",
     "typescript": "~5.8.3",
     "vite": "^7.0.4",
-    "vite-plugin-md": "^0.21.5",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^2.2.12"
   }
