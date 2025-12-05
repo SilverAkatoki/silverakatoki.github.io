@@ -1,13 +1,13 @@
 # 初探 MHWI LuaF 框架 Mod 开发
 
-基于本征的 [LuaFramework](https://github.com/eigeen/LuaFramework)编写。*原作者就在触手可及的地方，为什么不用呢*
+基于本征的 [LuaFramework](https://github.com/eigeen/LuaFramework) 编写。*原作者就在触手可及的地方，为什么不用呢*
 目前写出的结果在 [MHWI-LuaF-mods](https://github.com/SilverAkatoki/MHWI-LuaF-mods/) 这个仓库，Mod 适用于 MHW **15.23** 版本，截至成稿期间应该没有别的更新了。*除非往里塞物语 3 的广告*
 
 ## 开发思路
 
 我想实现的功能是：**当怪物血量小于某个定值的时候，打印一个提醒我该超解收尾的系统提示**。
 
-![提示](/posts/imgs/2002a457-8524-49e3-b7b3-c0ca414beb6f.png)
+![提示](/posts/imgs/5ENjLt8ENr1KMTmbw9dAgg.png)
 
 拿到库以后，就决定去找有没有相关的 API，LuaF 并没有提供直接的「访问怪物血量」的函数。
 试着去查一下 `sdk.d.lua`。
@@ -52,11 +52,8 @@
 
   ```lua
   local Message = require("_framework.game.message")
-  Message.show_system(
-                    "要打印的信息",
-                    Message.SystemMessageColor.Purple
-                )
-  -- 只有蓝色和紫色可选，替换第二个枚举参数进行更改
+  Message.show_system("要打印的信息", Message.SystemMessageColor.Purple)
+  -- 只有蓝色（Message.SystemMessageColor.Blue）和紫色
   ```
 
 ## 寻找内存
@@ -65,7 +62,7 @@
 使用 CE 查找血量，但是无法确认它相对于怪物基址（可用 LuaF 提供的方法获取）的偏移。*大模型猜的全错🤖👎*
 之后本征给我了个 CT 表，可以从里面获取一个地址的注释和相关的指针链。比如我正在找的怪物当前血量：
 
-![指针链](/posts/imgs/68e0eded-cfdc-4f37-8a62-69bc8db6acf6.png)
+![指针链](/posts/imgs/eK1zs5qvXAfbkkkzw8iN2V.png)
 
 其中的 `1360e0080` 是可以被获取的**怪物基址**
 `0x7670` 和 `0x64` 是两个硬编码的偏移。
