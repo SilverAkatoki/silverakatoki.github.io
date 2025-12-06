@@ -27,7 +27,7 @@ const routes = [
     path: "/tag",
     name: "Tag",
     component: () => import("@/views/Tag.vue")
-  },
+  }
 ];
 
 const router = createRouter({

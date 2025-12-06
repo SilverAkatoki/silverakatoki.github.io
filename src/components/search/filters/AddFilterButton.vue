@@ -71,8 +71,7 @@ const handleSelected = (ruleType: FilterRuleType, event?: MouseEvent) => {
         v-for="rule in filteredRuleOptions"
         :key="`rule-${rule.type}`"
         class="dropdown-item"
-        @click="handleSelected(rule.type, $event)"
-      >
+        @click="handleSelected(rule.type, $event)">
         <img class="icon" :src="rule.icon" alt="" />
         {{ rule.label }}
       </span>

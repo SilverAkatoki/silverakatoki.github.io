@@ -2,6 +2,48 @@
 @import "katex/dist/katex.min.css";
 @import url("../../assets/styles/markdown.css");
 
+.markdown-body {
+  display: grid;
+  position: relative;
+
+  grid-template-columns: 1fr minmax(auto, 62rem) 1fr;
+
+  width: 100%;
+  min-height: 100vh;
+}
+
+.article-body-content {
+  grid-column: 2;
+
+  max-width: none;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 2rem;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.article-right-sidebar {
+  display: block;
+
+  grid-column: 3;
+  width: 250px;
+  padding-top: 20px;
+  z-index: 10;
+}
+
+.article-toc-pane {
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px - 80px);
+  overflow-y: auto;
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+}
+
 .article-error {
   max-width: 900px;
   margin: 2rem auto;

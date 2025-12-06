@@ -20,6 +20,9 @@ importers:
       dompurify:
         specifier: ^3.2.7
         version: 3.2.7
+      eslint-plugin-import:
+        specifier: ^2.32.0
+        version: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.8.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.36.0)
       highlight.js:
         specifier: ^11.11.1
         version: 11.11.1
@@ -75,9 +78,6 @@ importers:
       eslint-import-resolver-typescript:
         specifier: ^4.4.4
         version: 4.4.4(eslint-plugin-import@2.32.0)(eslint@9.36.0)
-      eslint-plugin-import:
-        specifier: ^2.32.0
-        version: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.8.3))(eslint-import-resolver-typescript@4.4.4)(eslint@9.36.0)
       eslint-plugin-vue:
         specifier: ^10.4.0
         version: 10.5.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.8.3))(eslint@9.36.0)(vue-eslint-parser@10.2.0(eslint@9.36.0))

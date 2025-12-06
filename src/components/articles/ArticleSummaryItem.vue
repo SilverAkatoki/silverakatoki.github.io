@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { ArticleMetadata } from "@/types/article";
 import { computed } from "vue";
+
+import type { ArticleMetadata } from "@/types/article";
 
 const { article, isShowUpdatedDate, isShowPlaceholder } = defineProps<{
   article: ArticleMetadata;
@@ -22,7 +23,7 @@ const showedText = computed(() => {
       v-if="article.uuid"
       :to="{ path: '/article', query: { uuid: article.uuid } }"
       class="article-title">
-      <div class="title-field" v-html="article.title"></div>
+      <div class="title-field">{{ article.title }}</div>
     </router-link>
     <span class="article-time">
       {{ showedText }}

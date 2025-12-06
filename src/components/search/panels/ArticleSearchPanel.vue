@@ -6,12 +6,12 @@ import { debounce } from "ts-debounce";
 import searchIconUrl from "@/assets/icons/search.svg";
 import FilterRuleMenu from "@/components/search/filters/FilterRuleMenu.vue";
 import SortRuleMenu from "@/components/search/sorting/SortRuleMenu.vue";
-import { DEFAULT_SORT_STATE, type SortState } from "@/types/sortRuleSelector";
 import {
   cloneFilterState,
   createDefaultFilterState,
   type FilterState
 } from "@/types/filterRule";
+import { DEFAULT_SORT_STATE, type SortState } from "@/types/sortRuleSelector";
 
 const title = ref("");
 const sortState = ref<SortState>({ ...DEFAULT_SORT_STATE });

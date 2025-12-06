@@ -39,7 +39,7 @@ export const DEFAULT_FILTER_STATE: FilterState = {
 };
 
 export const createDefaultFilterState = (): FilterState => ({
- ...DEFAULT_FILTER_STATE
+  ...DEFAULT_FILTER_STATE
 });
 
 export const cloneFilterState = (state: FilterState): FilterState => ({
@@ -49,3 +49,18 @@ export const cloneFilterState = (state: FilterState): FilterState => ({
     values: [...rule.values]
   }))
 });
+
+export interface TagOrCategoryItem extends Array<string | number> {
+  0: string;
+  1: number;
+};
+
+// tags.json 数据结构
+export interface TagsData {
+  tags: TagOrCategoryItem[];
+};
+
+// categories.json 数据结构
+export interface CategoriesData {
+  categories: TagOrCategoryItem[];
+}

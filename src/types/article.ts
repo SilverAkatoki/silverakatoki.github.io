@@ -11,3 +11,10 @@ export interface Article {
   metadata: ArticleMetadata;
   content: string;
 };
+
+export interface ArticleTocItem {
+  id: string;
+  level: number;
+  text: string;
+  children: ArticleTocItem[];
+};

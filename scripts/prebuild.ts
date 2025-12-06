@@ -2,9 +2,9 @@
 import path from "node:path";
 import process from "node:process";
 
+import { marked, type Token } from "marked";
 import short from "short-uuid";
 import pkg from "yaml-front-matter";
-import { marked, type Token } from "marked";
 
 import siteInfo from "../src/data/site-settings.json" with { type: "json" };
 
@@ -122,33 +122,33 @@ const modifiedImgUrl = async (sourceImgPath: string, context: string): Promise<s
   const walkTokens = (tokens: Token[]) => {
     for (const token of tokens) {
       switch (token.type) {
-        case 'image':
-          imageTokens.push(token);
-          break;
-        case 'paragraph':
-        case 'blockquote':
-        case 'list_item':
-        case 'heading':
-        case 'table_cell':
-          if (token.tokens) {
-            walkTokens(token.tokens);
+      case "image":
+        imageTokens.push(token);
+        break;
+      case "paragraph":
+      case "blockquote":
+      case "list_item":
+      case "heading":
+      case "table_cell":
+        if (token.tokens) {
+          walkTokens(token.tokens);
+        }
+        break;
+      case "list":
+        if (token.items) {
+          walkTokens(token.items);
+        }
+        break;
+      case "table":
+        if (token.header) {
+          walkTokens(token.header);
+        }
+        if (token.rows) {
+          for (const row of token.rows) {
+            walkTokens(row);
           }
-          break;
-        case 'list':
-          if (token.items) {
-            walkTokens(token.items);
-          }
-          break;
-        case 'table':
-          if (token.header) {
-            walkTokens(token.header);
-          }
-          if (token.rows) {
-            for (const row of token.rows) {
-              walkTokens(row);
-            }
-          }
-          break;
+        }
+        break;
       }
     }
   };
@@ -166,10 +166,10 @@ const modifiedImgUrl = async (sourceImgPath: string, context: string): Promise<s
 
   // 从后向前替换，避免索引错位
   for (let i = imageTokens.length - 1; i >= 0; i--) {
-    const token = imageTokens[i] as any;
+    const token = imageTokens[i] as unknown as Token & { href: string | null; title: string | null; text: string | null; raw?: string };
     if (token.type !== "image") continue;
 
-    const raw = token.raw ?? `![${token.text}](${token.href}${token.title ? ` "${token.title}"` : ''})`;
+    const raw = token.raw ?? `![${token.text}](${token.href}${token.title ? ` "${token.title}"` : ""})`;
     const idx = modified.lastIndexOf(raw);
     if (idx === -1) continue;
 
@@ -283,7 +283,7 @@ const main = async (): Promise<void> => {
             // 特判日期，因为 yaml-front-matter 会把日期解析成 Date 对象，然后就会变成很长一条
             return `${key}: ${toDateString(value)}`;
           }
-          return `${key}: ${value}`
+          return `${key}: ${value}`;
         });
         yamlLines.unshift(`uuid: ${uuid}`);
         const newContent = `---\n${yamlLines.join("\n")}\n---${parsed.__content}`;  // __content 包含前后的换行
@@ -292,19 +292,14 @@ const main = async (): Promise<void> => {
       }
 
       tags.forEach(tag => {
-        if (!tagMap.has(tag)) {
-          tagMap.set(tag, 1);
-        } else {
-          tagMap.set(tag, tagMap.get(tag)! + 1);
-        }
+        const currentCount = tagMap.get(tag) ?? 0;
+        tagMap.set(tag, currentCount + 1);
       });
 
       categories.forEach(category => {
-        if (!categoryMap.has(category)) {
-          categoryMap.set(category, 1);
-        } else {
-          categoryMap.set(category, categoryMap.get(category)! + 1);
-        }
+        // 本质还是统计数量，函数式很神奇吧
+        const currentCount = categoryMap.get(category) ?? 0;
+        categoryMap.set(category, currentCount + 1);
       });
 
       const context = await modifiedImgUrl(sourceDir, `${body.trimEnd()}\n`);
@@ -334,7 +329,7 @@ const main = async (): Promise<void> => {
 
   await writeJson(ARTICLES_INDEX_PATH, { articles });
   await writeJson(TAGS_INDEX_PATH, { tags: serializedTags });
-  await writeJson(CATEGORIES_INDEX_PATH, { categories: serializedCategories })
+  await writeJson(CATEGORIES_INDEX_PATH, { categories: serializedCategories });
 
   log(`已写入 ${articles.length} 条文章索引到 ${path.relative(ROOT_DIR, ARTICLES_INDEX_PATH)}`);
   log(`已写入 ${serializedTags.length} 个标签到 ${path.relative(ROOT_DIR, TAGS_INDEX_PATH)}`);

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-import TagMultiSelect from "@/components/search/filters/tag/TagMultiSelect.vue";
 import tagIconUrl from "@/assets/icons/tag.svg";
+import TagMultiSelect from "@/components/search/filters/tag/TagMultiSelect.vue";
+
 import type { FilterRule, FilterRuleOperator } from "@/types/filterRule";
 
 const props = defineProps<{
@@ -60,7 +61,7 @@ const handleSelectedItems = (value: string[]) => {
   <div class="filter-rule-container">
     <img :src="tagIconUrl" class="icon" alt="" />
     <span class="description">标签</span>
-    <select class="rule-term" v-model="selectedOperator">
+    <select v-model="selectedOperator" class="rule-term">
       <option value="eq">等于</option>
       <option value="ne">不等于</option>
     </select>
@@ -68,13 +69,14 @@ const handleSelectedItems = (value: string[]) => {
       <tag-multi-select
         :options="tags"
         :model-value="selectedItems"
-        @selected="handleSelectedItems"
-      />
+        @selected="handleSelectedItems" />
     </div>
     <button
       type="button"
       class="remove-rule-btn"
-      @click.stop="emit('remove', rule.id)">—</button>
+      @click.stop="emit('remove', rule.id)">
+—
+</button>
   </div>
 </template>
 

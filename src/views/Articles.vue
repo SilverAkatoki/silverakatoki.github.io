@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
-import ArticleSearchPanel from "@/components/search/panels/ArticleSearchPanel.vue";
 import ArticleSummaryItem from "@/components/articles/ArticleSummaryItem.vue";
+import ArticleSearchPanel from "@/components/search/panels/ArticleSearchPanel.vue";
 import TagExplorerPanel from "@/components/search/panels/TagExplorerPanel.vue";
 import { articles } from "@/data/articles-index.json";
-import type { ArticleMetadata } from "@/types/article";
 import {
   FilterRuleTypes,
   cloneFilterState,
@@ -18,6 +17,8 @@ import {
   SortKeys,
   type SortState
 } from "@/types/sortRuleSelector";
+
+import type { ArticleMetadata } from "@/types/article";
 
 const titlePattern = ref<string>("");
 const sortState = ref<SortState>({ ...DEFAULT_SORT_STATE });

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 
-import ArticleSearchPanel from "@/components/search/panels/ArticleSearchPanel.vue";
-import ArticleSummaryItem from "@/components/articles/ArticleSummaryItem.vue";
+import { useRoute } from "vue-router";
+
 import tagIconUrl from "@/assets/icons/tag.svg";
+import ArticleSummaryItem from "@/components/articles/ArticleSummaryItem.vue";
+import ArticleSearchPanel from "@/components/search/panels/ArticleSearchPanel.vue";
 import { articles } from "@/data/articles-index.json";
-import type { ArticleMetadata } from "@/types/article";
+import tags from "@/data/tags.json";
 import {
   FilterRuleTypes,
   cloneFilterState,
@@ -18,8 +20,10 @@ import {
   SortKeys,
   type SortState
 } from "@/types/sortRuleSelector";
-import { useRoute } from "vue-router";
-import tags from '@/data/tags.json';
+
+import type { ArticleMetadata } from "@/types/article";
+
+
 
 const route = useRoute();
 

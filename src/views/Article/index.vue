@@ -3,6 +3,7 @@ import { onBeforeUnmount, ref, watch } from "vue";
 
 import { useRoute } from "vue-router";
 
+import ArticleToc from "@/components/common/ArticleToc.vue";
 import { useArticleContent } from "@/composables/useArticleContent";
 import { articles as articleEntries } from "@/data/articles-index.json";
 
@@ -15,7 +16,7 @@ const articleIndex = new Map<string, ArticleMetadata>(
 const route = useRoute();
 const loadError = ref<string | null>(null);
 
-const { meta, sanitizedHtml, setArticleContent, clearArticleContent } =
+const { meta, sanitizedHtml, tocTree, setArticleContent, clearArticleContent } =
   useArticleContent();
 
 const articleContentRef = ref<HTMLElement | null>(null);
@@ -133,45 +134,61 @@ watch(
     <p v-if="loadError" class="article-error">{{ loadError }}</p>
     <template v-else>
       <article class="markdown-body">
-        <aside v-if="meta" class="article-meta-pane">
-          <dl class="article-meta-list">
-            <div class="article-meta-item">
-              <dt class="article-meta-term">创建日期</dt>
-              <dd class="article-meta-detail article-meta-date">
-                {{ meta.createdDate }}
-              </dd>
-            </div>
-            <div class="article-meta-item">
-              <dt class="article-meta-term">最近更新日期</dt>
-              <dd class="article-meta-detail article-meta-date">
-                {{ meta.updatedDate }}
-              </dd>
-            </div>
-            <div class="article-meta-item">
-              <dt class="article-meta-term">标签</dt>
-              <dd class="article-meta-detail">
-                <span v-for="tag in meta.tags" :key="tag" class="article-tag">
-                  {{ tag }}
-                </span>
-                <span v-if="meta.tags.length === 0" class="article-meta-empty">
-                  暂无标签
-                </span>
-              </dd>
-            </div>
-            <div class="article-meta-item" v-if="meta.categories.length !== 0">
-              <dt class="article-meta-term">类别</dt>
-              <dd class="article-meta-detail">
-                <span v-for="category in meta.categories" :key="category" class="article-tag">
-                  {{ category }}
-                </span>
-              </dd>
-            </div>
-          </dl>
+        <section class="article-body-content">
+          <aside v-if="meta" class="article-meta-pane">
+            <dl class="article-meta-list">
+              <div class="article-meta-item">
+                <dt class="article-meta-term">创建日期</dt>
+                <dd class="article-meta-detail article-meta-date">
+                  {{ meta.createdDate }}
+                </dd>
+              </div>
+              <div class="article-meta-item">
+                <dt class="article-meta-term">最近更新日期</dt>
+                <dd class="article-meta-detail article-meta-date">
+                  {{ meta.updatedDate }}
+                </dd>
+              </div>
+              <div class="article-meta-item">
+                <dt class="article-meta-term">标签</dt>
+                <dd class="article-meta-detail">
+                  <span v-for="tag in meta.tags" :key="tag" class="article-tag">
+                    {{ tag }}
+                  </span>
+                  <span
+                    v-if="meta.tags.length === 0"
+                    class="article-meta-empty">
+                    暂无标签
+                  </span>
+                </dd>
+              </div>
+              <div
+                v-if="meta.categories.length !== 0"
+                class="article-meta-item">
+                <dt class="article-meta-term">类别</dt>
+                <dd class="article-meta-detail">
+                  <span
+                    v-for="category in meta.categories"
+                    :key="category"
+                    class="article-tag">
+                    {{ category }}
+                  </span>
+                </dd>
+              </div>
+            </dl>
+          </aside>
+
+          <section
+            ref="articleContentRef"
+            class="article-content"
+            v-html="sanitizedHtml"></section>
+        </section>
+        <aside class="article-right-sidebar">
+          <div class="article-toc-pane">
+            <h2 class="toc-title">文章目录</h2>
+            <ArticleToc :toc="tocTree" />
+          </div>
         </aside>
-        <section
-          ref="articleContentRef"
-          class="article-content"
-          v-html="sanitizedHtml"></section>
       </article>
     </template>
   </main>

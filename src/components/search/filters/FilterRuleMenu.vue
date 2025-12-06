@@ -1,24 +1,27 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 
-import tags from "@/data/tags.json";
-import categories from "@/data/categories.json";
-
+import filterIconUrl from "@/assets/icons/filter.svg";
 import AddFilterButton from "@/components/search/filters/AddFilterButton.vue";
 import FilterCategoryRuleItem from "@/components/search/filters/category/FilterCategoryRuleItem.vue";
 import FilterTagRuleItem from "@/components/search/filters/tag/FilterTagRuleItem.vue";
-import filterIconUrl from "@/assets/icons/filter.svg";
 import { useToggleDropdownMenu } from "@/composables/useToggleDropdownMenu";
+import categories from "@/data/categories.json";
+import tags from "@/data/tags.json";
 import {
   FilterRuleTypes,
   cloneFilterState,
   createDefaultFilterState
 } from "@/types/filterRule";
+
 import type {
+  CategoriesData,
   FilterMatchMode,
   FilterRule,
   FilterRuleType,
-  FilterState
+  FilterState,
+  TagOrCategoryItem,
+  TagsData
 } from "@/types/filterRule";
 
 const { containerRef, isOpen, toggleDropdown } = useToggleDropdownMenu();
@@ -38,17 +41,17 @@ const emit = defineEmits<{
 }>();
 
 const tagOptions = computed(() => {
-  const raw = (tags as any)?.tags;
+  const raw = (tags as TagsData)?.tags;
   if (!Array.isArray(raw)) return [];
-  return Array.from(new Set(raw.map((item: any) => String(item[0])))).sort(
+  return Array.from(new Set(raw.map((item: TagOrCategoryItem) => String(item[0])))).sort(
     (a, b) => a.localeCompare(b)
   );
 });
 
 const categoryOptions = computed(() => {
-  const raw = (categories as any)?.categories;
+  const raw = (categories as CategoriesData)?.categories;
   if (!Array.isArray(raw)) return [];
-  return Array.from(new Set(raw.map((item: any) => String(item[0])))).sort(
+  return Array.from(new Set(raw.map((item: TagOrCategoryItem) => String(item[0])))).sort(
     (a, b) => a.localeCompare(b)
   );
 });
@@ -112,7 +115,7 @@ watch(
   <div ref="containerRef" class="drop-button-container">
     <button type="button" class="drop-button" @click="toggleDropdown">
       <img :src="filterIconUrl" class="button-icon" alt="" aria-hidden="true" />
-      <span class="button-label" v-show="usedRuleCount !== 0">
+      <span v-show="usedRuleCount !== 0" class="button-label">
         {{ usedRuleCount }}
       </span>
     </button>

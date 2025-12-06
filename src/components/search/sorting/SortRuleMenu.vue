@@ -58,8 +58,7 @@ const handleSelectRule = (property: SortProperty) => {
           :src="arrowDownArrowUpIconUrl"
           class="button-icon"
           alt=""
-          aria-hidden="true"
-        />
+          aria-hidden="true" />
       </template>
       <template v-else>
         <img
@@ -70,8 +69,7 @@ const handleSelectRule = (property: SortProperty) => {
           "
           class="button-icon"
           alt=""
-          aria-hidden="true"
-        />
+          aria-hidden="true" />
         <span class="button-label">{{ selectedRule.label }}</span>
       </template>
     </button>
@@ -81,8 +79,7 @@ const handleSelectRule = (property: SortProperty) => {
         :key="rule.key"
         class="dropdown-item"
         :class="{ selected: sortProperty === rule.key }"
-        @click="handleSelectRule(rule.key)"
-      >
+        @click="handleSelectRule(rule.key)">
         <span class="item-description">{{ rule.label }}</span>
         <div
           class="item-type"
@@ -90,8 +87,7 @@ const handleSelectRule = (property: SortProperty) => {
             { active: sortProperty === rule.key },
             rule.variant === 'default' ? 'default' : null
           ]"
-          aria-hidden="true"
-        >
+          aria-hidden="true">
           <template v-if="rule.variant === 'default'">
             <span class="item-check">✓</span>
           </template>
@@ -101,15 +97,13 @@ const handleSelectRule = (property: SortProperty) => {
               :src="arrowDownShortWideIconUrl"
               class="item-icon"
               alt=""
-              aria-hidden="true"
-            />
+              aria-hidden="true" />
             <img
               v-else
               :src="arrowDownWideShortIconUrl"
               class="item-icon"
               alt=""
-              aria-hidden="true"
-            />
+              aria-hidden="true" />
           </template>
         </div>
       </div>

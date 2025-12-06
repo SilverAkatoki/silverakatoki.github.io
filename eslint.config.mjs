@@ -23,7 +23,8 @@ const browserGlobals = {
   MouseEvent: "readonly",
   Event: "readonly",
   CustomEvent: "readonly",
-  ResizeObserver: "readonly"
+  ResizeObserver: "readonly",
+  crypto: "readonly"
 };
 
 // 公共导入顺序配置
@@ -222,7 +223,14 @@ export default [
           svg: "always",
           math: "always"
         }
-      ]
+      ],
+      "vue/html-closing-bracket-newline": [
+        "error",
+        {
+          singleline: "never",
+          multiline: "never"
+        }
+      ],
 
       // 导入规则（Vue 文件简化版）
       "import/order": ["error", importOrderConfig],

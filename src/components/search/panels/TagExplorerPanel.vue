@@ -78,15 +78,15 @@ window.addEventListener("resize", updateToggleButtonShow);
     <div class="header">
       <span class="title">总共有 {{ tags.length }} 个标签</span>
       <button
+        v-show="showToggleButton"
         class="toggle-btn"
-        @click="isExpanded = !isExpanded"
-        v-show="showToggleButton">
+        @click="isExpanded = !isExpanded">
         {{ isExpanded ? "收起" : "展开" }}
         <span :class="['arrow', isExpanded ? 'up' : 'down']"></span>
       </button>
     </div>
 
-    <div class="tags-container" ref="tagsContainerRef">
+    <div ref="tagsContainerRef" class="tags-container">
       <div v-for="tag in tags" :key="tag[0]" class="tag-item">
         <router-link
           :to="{ path: '/tag', query: { tag: tag[0] } }"

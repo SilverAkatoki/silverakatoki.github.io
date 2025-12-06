@@ -97,7 +97,7 @@ const updateVisibleSelections = async () => {
   const newVisibleIndices: number[] = [];
   let currentWidth = 0;
 
-  const EXTRA_PADDING: number = 20;
+  const EXTRA_PADDING = 20;
   selectedTags.value.forEach((value, index) => {
     item.textContent = value;
     const itemWidth = item.offsetWidth;
