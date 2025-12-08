@@ -69,9 +69,9 @@ fn main() {
 
 放一张刷出来的热成像 SVK
 
-![BF6](/posts/imgs/rjJT1NrswHH6btVV8zQMVN.jpg)
+![BF6](/posts/imgs/6QXWR8Ecotmxw2PtieV8Xv.jpg)
 
-## 数学公式 $\text{标题也有公式吗}$
+## 数学公式
 
 内联公式示例 $e^{i\pi} + 1 = 0$。
 

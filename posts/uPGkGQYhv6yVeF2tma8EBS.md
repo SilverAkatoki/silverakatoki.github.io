@@ -238,3 +238,63 @@ if (!fooRef.value) return;
 const item = fooRef.value;  // 复杂操作一般解出来用，少了几个.value
 item.innerHTML = "优雅";
 ```
+
+## 字典统计次数的演化
+
+总会有使用字典统计一个数组（或者是字符串等等）中元素出现次数的情景，没有方法就得手写。
+
+```ts
+const arr = ["a", "b", "c", "b", "d", "c", "c"];
+
+const countMap = new Map<string, number>();
+
+arr.forEach(element => {
+  if (countMap.has(element)) {
+    countMap.set(element, countMap.get(element) + 1);
+  } else {
+    countMap.set(element, 1);
+  }
+});
+```
+
+很 C++ 风格（贬义）的写法，还会在调用 `get` 的时候提示你可能为 `undefined`（因为笨蛋类型检查不认）。
+
+用一下 `??` 或是 `||` 语法可以把 if 语句省掉。
+如果没有键，`get` 会返回 `undefined`，符号会选择返回另一个 `0` 。
+
+```ts
+arr.forEach(element => {
+  countMap.set(element, (countMap.get(element) ?? 0) + 1);
+  // 注意运算优先级，?? 和 || 优先级比加减乘除低，得套括号
+});
+```
+
+## 推断 JSON 文件类型
+
+这里有一个会在哪里都可能见到类似的 JSON 文本（文件名是 `user.json`）。
+
+```json
+{ 
+  "user": {
+    "name": "Foo",
+    "age": 24,
+    "id": [
+      "aaa",
+      "bbb"
+    ]
+  } 
+}
+```
+
+类型都可以推出来：
+
+```ts
+import userJson from "user.json";
+
+type RawUserJson = typeof userJson;
+type User = RawUserJson["user"];
+
+const user: User = userJson.user;
+```
+
+## 标注库类型
