@@ -115,6 +115,13 @@ const writeJson = async (filePath: string, data: unknown): Promise<void> => {
   await fs.writeFile(filePath, content, "utf8");
 };
 
+// 为了确保没有类型错误搞的
+type TokenWithChildren = Token & { tokens?: Token[] };
+
+const hasChildTokens = (token: Token): token is TokenWithChildren => {
+  return Array.isArray((token as TokenWithChildren).tokens);
+};
+
 const modifiedImgUrl = async (sourceImgPath: string, context: string): Promise<string> => {
   const tokens = marked.Lexer.lex(context);
 
@@ -130,7 +137,7 @@ const modifiedImgUrl = async (sourceImgPath: string, context: string): Promise<s
       case "list_item":
       case "heading":
       case "table_cell":
-        if (token.tokens) {
+        if (hasChildTokens(token) && token.tokens) {
           walkTokens(token.tokens);
         }
         break;

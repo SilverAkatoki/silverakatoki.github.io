@@ -2,6 +2,10 @@
 @import "katex/dist/katex.min.css";
 @import url("../../assets/styles/markdown.css");
 
+.toc-title {
+  display: inline-block;
+}
+
 .markdown-body {
   display: grid;
   position: relative;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from "vue";
+import { onBeforeUnmount, ref, watch, onMounted, onUnmounted } from "vue";
 
 import { useRoute } from "vue-router";
 
@@ -16,10 +16,14 @@ const articleIndex = new Map<string, ArticleMetadata>(
 const route = useRoute();
 const loadError = ref<string | null>(null);
 
-const { meta, sanitizedHtml, tocTree, setArticleContent, clearArticleContent } =
-  useArticleContent();
-
-const articleContentRef = ref<HTMLElement | null>(null);
+const {
+  meta,
+  sanitizedHtml,
+  tocTree,
+  articleContentRef,
+  setArticleContent,
+  clearArticleContent
+} = useArticleContent();
 
 // 抓出脚注的跳转地址
 const extractFootnoteTargetId = (anchor: HTMLAnchorElement): string | null => {
@@ -127,6 +131,19 @@ watch(
   },
   { immediate: true }
 );
+
+const scrollPercent = ref<number>(0);
+
+const updatedScrollPercent = () => {
+  scrollPercent.value = Math.floor(
+    (window.scrollY /
+      (document.documentElement.scrollHeight - window.innerHeight)) *
+      100
+  );
+};
+
+onMounted(() => document.addEventListener("scroll", updatedScrollPercent));
+onUnmounted(() => document.removeEventListener("scroll", updatedScrollPercent));
 </script>
 
 <template>
@@ -184,9 +201,20 @@ watch(
             v-html="sanitizedHtml"></section>
         </section>
         <aside class="article-right-sidebar">
-          <div class="article-toc-pane">
-            <h2 class="toc-title">文章目录</h2>
-            <ArticleToc :toc="tocTree" />
+          <!-- 不加对 tocTree 的判断会在目录没渲染完前弹个对 undefined 的访问出来 -->
+          <div v-if="tocTree && tocTree[0]" class="article-toc-pane">
+            <span
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: start;
+              ">
+              <h2 class="toc-title">文章目录</h2>
+              <span class="scroll-percent">{{ scrollPercent }}%</span>
+            </span>
+            <div>
+              <ArticleToc :toc="tocTree" />
+            </div>
           </div>
         </aside>
       </article>

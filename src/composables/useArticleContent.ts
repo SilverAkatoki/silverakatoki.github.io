@@ -40,8 +40,9 @@ const fillTocChildren = (toc: ArticleTocItem[]) => {
     stack.push(currentNode);
   }
 
-  // root 下第一个，也是唯一一个元素是一级标题，文章的标题
-  return root.children[0].children;
+  // root.children[0] 是唯一一个元素，是文章的标题，取它的子节点就是下面的标题了
+  // 没渲染前 root.children 是空的，加一个防止出访问 undefined 属性的错误
+  return root.children[0]?.children;
 };
 
 const inlineMathExtension = {
@@ -157,6 +158,7 @@ interface TrueHeading {
 };
 
 export const useArticleContent = () => {
+  const articleContentRef = ref<HTMLElement | null>(null);
   const mdText = ref<string>("");
   const meta = ref<ArticleMetadata | null>(null);
   const toc = ref<ArticleTocItem[]>([]);
@@ -193,8 +195,12 @@ export const useArticleContent = () => {
     mdText,
     async val => {
       toc.value = [];
-      const result = await parser.parse(val);
-      renderedHtml.value = result as string;
+      try {
+        const result = await parser.parse(val);
+        renderedHtml.value = result as string;
+      } catch (err) {
+        console.log(err);
+      }
     },
     { immediate: true }
   );
@@ -202,7 +208,7 @@ export const useArticleContent = () => {
   watch(
     sanitizedHtml,
     async () => {
-      if (typeof window === "undefined") {
+      if (!articleContentRef.value) {
         // 等渲染完了在高亮
         return;
       }
@@ -210,7 +216,7 @@ export const useArticleContent = () => {
       await nextTick();
 
       // 应用高亮
-      window.document.querySelectorAll("pre code").forEach(el => {
+      articleContentRef.value.querySelectorAll("pre code").forEach(el => {
         try {
           hljs.highlightElement(el as HTMLElement);
         } catch {
@@ -234,12 +240,13 @@ export const useArticleContent = () => {
     mdText.value = content.trim();
   };
 
-  const tocTree = computed(() => fillTocChildren(toc.value));
+  const tocTree = computed(() => fillTocChildren(toc.value)) || [];
 
   return {
     meta,
     sanitizedHtml,
     tocTree,
+    articleContentRef,
     setArticleContent,
     clearArticleContent
   };
