@@ -35,6 +35,7 @@ updatedDate: 2025-11-12
 published: true
 tags: ["tag1", "tag2"]
 category: "类别1"
+uuid: "xxxxyyyyzzzz114514"
 ---
 
 # 正文标题
@@ -52,6 +53,7 @@ category: "类别1"
 
   _但我用的单数做字段名，很显然是不希望这样做的，只是作为一个可选的功能_
 - `published` **是否发布**字段选填，默认行为见下文。
+- `uuid` 字段是为了确保分享链接不会生效所以需要写回文件当中，这个流程可以见 `scripts/script.py` 这个自动化脚本
 
 ---
 
@@ -59,7 +61,7 @@ category: "类别1"
 这两者再被装入一个新的文件夹，例如：
 
 ```text
-文件夹名（建议与 markdown 文件名一致）
+markdown文件（文件夹名建议与 markdown 文件名一致）
 ├─ markdown文件.md
 └─ img
    ├─ 你的图片.png
@@ -70,7 +72,7 @@ category: "类别1"
 
 ---
 
-最终你的 markdown 文件 / 文件夹（含有图片时） 需要放在 `/posts/` 内 _当然你可以从别的地方复制过来，我就是这样做的_，markdown 文件名建议与 Markdown 一级标题一致。
+最终你的 markdown 文件 / 文件夹（含有图片时） 需要放在 `/posts/` 内 _当然你可以从别的地方复制过来，我就是这样做的，参考 `scripts/script.py`_
 
 #### 网站设置
 

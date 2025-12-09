@@ -3,7 +3,7 @@ import { computed, nextTick, ref, watch } from "vue";
 import DOMPurify from "dompurify";
 import hljs from "highlight.js/lib/common";
 import katex from "katex";
-import { Marked, marked, type RendererObject, type Token, type Tokens } from "marked";
+import { Marked, type RendererObject, type Token, type Tokens } from "marked";
 import markedFootnote from "marked-footnote";
 import { generate as generateShortUuid } from "short-uuid";
 
@@ -12,8 +12,6 @@ import type {
   ArticleMetadata,
   ArticleTocItem
 } from "@/types/article";
-
-marked.setOptions({ gfm: true, breaks: true });
 
 const fillTocChildren = (toc: ArticleTocItem[]) => {
   const root: ArticleTocItem = {
@@ -183,6 +181,7 @@ export const useArticleContent = () => {
 
   const createParser = () => {
     const marked = new Marked();
+    marked.setOptions({ gfm: true, breaks: true });
     marked.use({ renderer, extensions: [inlineMathExtension, blockMathExtension] });
     marked.use(markedFootnote({ description: "脚注", backRefLabel: "回到正文 {0}" }));
     return marked;
