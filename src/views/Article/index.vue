@@ -136,7 +136,7 @@ watch(
 const scrollPercent = ref<number>(0);
 
 const updatedScrollPercent = () => {
-  scrollPercent.value = Math.floor(
+  scrollPercent.value = Math.ceil(
     (window.scrollY /
       (document.documentElement.scrollHeight - window.innerHeight)) *
       100
