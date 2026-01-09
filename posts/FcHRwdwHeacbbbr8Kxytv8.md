@@ -296,5 +296,3 @@ type User = RawUserJson["user"];
 
 const user: User = userJson.user;
 ```
-
-## 标注库类型
