@@ -1,6 +1,6 @@
 # build-file-tree 开发笔记
 
-[仓库地址](https://github.com/SilverAkatoki/build-file-tree)
+[仓库地址](https://github.com/S1lverAkatsuki/build-file-tree)
 
 ## 事件挂载与 DOM
 

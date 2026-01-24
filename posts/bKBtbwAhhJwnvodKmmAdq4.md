@@ -1,6 +1,6 @@
 # hd2-random 开发笔记
 
-[仓库地址](https://github.com/SilverAkatoki/hd2-random)
+[仓库地址](https://github.com/S1lverAkatsuki/hd2-random)
 
 ## 利用 blob 实现图片缓存
 
